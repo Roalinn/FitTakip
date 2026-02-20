@@ -222,30 +222,30 @@ export default function GymTakip() {
     return (
         <div className="space-y-6">
             {/* Sub-tabs */}
-            <div className="flex items-center justify-between">
-                <div role="tablist" className="tabs tabs-boxed bg-base-200 rounded-xl p-1 inline-flex">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div role="tablist" className="tabs tabs-boxed bg-base-200 rounded-xl p-1 flex w-full sm:w-auto">
                     <button
                         role="tab"
-                        className={`tab rounded-lg font-medium transition-all duration-200 ${subTab === 'takip' ? 'tab-active bg-primary text-primary-content' : ''}`}
+                        className={`tab rounded-lg font-medium flex-1 transition-all duration-200 ${subTab === 'takip' ? 'tab-active bg-primary text-primary-content' : ''}`}
                         onClick={() => setSubTab('takip')}
                     >
                         {t('takip_tab_gym', 'Gym Takip')}
                     </button>
                     <button
                         role="tab"
-                        className={`tab rounded-lg font-medium transition-all duration-200 ${subTab === 'gelisim' ? 'tab-active bg-primary text-primary-content' : ''}`}
+                        className={`tab rounded-lg font-medium flex-1 transition-all duration-200 ${subTab === 'gelisim' ? 'tab-active bg-primary text-primary-content' : ''}`}
                         onClick={() => setSubTab('gelisim')}
                     >
                         {t('exercise_progress_title', 'Gym Gelişim')}
                     </button>
                 </div>
                 {subTab === 'takip' && (
-                    <div className="flex gap-2">
-                        <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
-                            + {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button className="btn btn-secondary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('cardio')}>
+                            + {t('gym_btn_cardio_add', 'Kardiyo')}
                         </button>
-                        <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
-                            + {t('gym_btn_add_ext', 'Antrenman Ekle')}
+                        <button className="btn btn-primary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('weight')}>
+                            + {t('gym_btn_add_ext', 'Antrenman')}
                         </button>
                     </div>
                 )}

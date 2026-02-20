@@ -112,11 +112,11 @@ export default function GymProgrami() {
                 ))}
             </div>
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                     {currentDayConfig.full}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <button
                         className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl"
                         onClick={() => {
@@ -136,11 +136,11 @@ export default function GymProgrami() {
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         </button>
                     )}
-                    <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
-                        + {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
+                    <button className="btn btn-secondary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('cardio')}>
+                        + {t('gym_btn_cardio_add', 'Kardiyo')}
                     </button>
-                    <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
-                        + {t('gym_btn_add_ext', 'Antrenman Ekle')}
+                    <button className="btn btn-primary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('weight')}>
+                        + {t('gym_btn_add_ext', 'Antrenman')}
                     </button>
                 </div>
             </div>

@@ -100,11 +100,11 @@ export default function DiyetProgrami() {
                 ))}
             </div>
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                     {currentDayConfig.full}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                     <button
                         className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl"
                         onClick={() => {
@@ -116,15 +116,15 @@ export default function DiyetProgrami() {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     </button>
-                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handleCopy} title="Programı Kopyala">
+                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handleCopy} title="Programı Kopyala">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                     </button>
                     {sessionStorage.getItem('fittakip_copied_diet') && (
-                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handlePaste} title="Yapıştır">
+                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handlePaste} title="Yapıştır">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         </button>
                     )}
-                    <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
+                    <button className="btn btn-primary btn-sm rounded-xl flex-1 sm:flex-none" onClick={openAdd}>
                         {t('diet_btn_add', '+ Öğün Ekle')}
                     </button>
                 </div>
