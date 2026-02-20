@@ -49,8 +49,8 @@ export default function App() {
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
 
-        // Allow opening sidebar by swiping right from the edge (x < 30)
-        if (isRightSwipe && touchStart < 30) {
+        // Allow opening sidebar by swiping right from anywhere
+        if (isRightSwipe) {
             setSidebarOpen(true);
         }
         // Allow close sidebar by swiping left
