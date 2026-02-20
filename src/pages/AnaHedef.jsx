@@ -324,6 +324,20 @@ export default function AnaHedef() {
                         </motion.div>
                     </div>
 
+                    {/* Weekly average info */}
+                    {weeklyAvg && (
+                        <motion.div
+                            className="rounded-xl bg-primary/5 border border-primary/10 px-5 py-3"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.25 }}
+                        >
+                            <p className="text-sm text-base-content/70">
+                                {t('anahedef_weekly_avg_1')} <span className="font-bold text-primary">{weeklyAvg.toFixed(2)} kg</span> {t('anahedef_weekly_avg_2')}
+                            </p>
+                        </motion.div>
+                    )}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Progress Bar */}
                         <motion.div
@@ -441,20 +455,6 @@ export default function AnaHedef() {
                             </motion.div>
                         )}
                     </div>
-
-                    {/* Weekly average info (moved to bottom) */}
-                    {weeklyAvg && (
-                        <motion.div
-                            className="rounded-xl bg-primary/5 border border-primary/10 px-5 py-3"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                        >
-                            <p className="text-sm text-base-content/70">
-                                {t('anahedef_weekly_avg_1')} <span className="font-bold text-primary">{weeklyAvg.toFixed(2)} kg</span> {t('anahedef_weekly_avg_2')}
-                            </p>
-                        </motion.div>
-                    )}
                 </div>
             ) : (
                 <motion.div
@@ -470,7 +470,8 @@ export default function AnaHedef() {
                         <p className="text-sm text-base-content/30">{t('anahedef_no_goal_desc')}</p>
                     </div>
                 </motion.div>
-            )}
+            )
+            }
 
             {/* Dashboard Section */}
             <div className="mt-6">
@@ -488,6 +489,6 @@ export default function AnaHedef() {
                     <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 }
