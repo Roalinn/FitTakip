@@ -123,29 +123,44 @@ export default function Ayarlar() {
                     </div>
                 </motion.div>
 
-                {/* Export & Import */}
+                {/* Export */}
                 <motion.div
                     className="card bg-base-200 rounded-xl"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
                 >
-                    <div className="card-body p-4 space-y-4">
+                    <div className="card-body p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-sm">{t('settings_data')}</h3>
-                                <p className="text-xs text-base-content/40">{t('settings_data_desc')}</p>
+                                <h3 className="font-semibold text-sm">{t('settings_export_title', 'Verileri İndir')}</h3>
+                                <p className="text-xs text-base-content/40">{t('settings_export_desc', 'Kayıtlarınızı cihazınıza yedekleyin')}</p>
                             </div>
-                        </div>
-                        <div className="flex gap-2">
                             <button
-                                className="btn btn-outline btn-sm rounded-xl flex-1"
+                                className="btn btn-primary btn-sm rounded-xl"
                                 onClick={handleExport}
                             >
-                                {t('settings_export')}
+                                {t('settings_btn_export', 'İndir')}
                             </button>
-                            <label className="btn btn-outline btn-sm rounded-xl flex-1 cursor-pointer">
-                                {t('settings_import')}
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Import */}
+                <motion.div
+                    className="card bg-base-200 rounded-xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.17 }}
+                >
+                    <div className="card-body p-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-semibold text-sm">{t('settings_import_title', 'Veri Yükle')}</h3>
+                                <p className="text-xs text-base-content/40">{t('settings_import_desc', 'Önceki yedeğinizi cihazınıza aktarın')}</p>
+                            </div>
+                            <label className="btn btn-secondary btn-sm rounded-xl cursor-pointer">
+                                {t('settings_btn_import', 'Yükle')}
                                 <input
                                     type="file"
                                     accept=".json"

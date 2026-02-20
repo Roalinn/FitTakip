@@ -1,29 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../hooks/useTranslation';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 
-const MEASUREMENTS = [
-    { key: 'chest', label: 'Göğüs', color: 'oklch(0.65 0.24 265)' },
-    { key: 'waist', label: 'Bel', color: 'oklch(0.7 0.2 150)' },
-    { key: 'hip', label: 'Kalça', color: 'oklch(0.7 0.2 30)' },
-    { key: 'arm', label: 'Kol', color: 'oklch(0.7 0.2 60)' },
-    { key: 'leg', label: 'Bacak', color: 'oklch(0.7 0.2 330)' },
-    { key: 'shoulder', label: 'Omuz', color: 'oklch(0.7 0.2 200)' },
-];
-
-const TIME_FILTERS = [
-    { key: 'week', label: 'Son Hafta', days: 7 },
-    { key: 'month', label: 'Son Ay', days: 30 },
-    { key: '6months', label: 'Son 6 Ay', days: 180 },
-    { key: 'year', label: 'Son Yıl', days: 365 },
-    { key: 'all', label: 'Tümü', days: null },
-];
-
 export default function BedenOlculeri() {
     const { state, dispatch } = useStore();
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
@@ -33,6 +18,23 @@ export default function BedenOlculeri() {
         date: '',
         chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '',
     });
+
+    const MEASUREMENTS = [
+        { key: 'chest', label: t('beden_chest', 'Göğüs'), color: 'oklch(0.65 0.24 265)' },
+        { key: 'waist', label: t('beden_waist', 'Bel'), color: 'oklch(0.7 0.2 150)' },
+        { key: 'hip', label: t('beden_hip', 'Kalça'), color: 'oklch(0.7 0.2 30)' },
+        { key: 'arm', label: t('beden_arm', 'Kol'), color: 'oklch(0.7 0.2 60)' },
+        { key: 'leg', label: t('beden_leg', 'Bacak'), color: 'oklch(0.7 0.2 330)' },
+        { key: 'shoulder', label: t('beden_shoulder', 'Omuz'), color: 'oklch(0.7 0.2 200)' },
+    ];
+
+    const TIME_FILTERS = [
+        { key: 'week', label: t('filter_week'), days: 7 },
+        { key: 'month', label: t('filter_month'), days: 30 },
+        { key: '6months', label: t('filter_6months'), days: 180 },
+        { key: 'year', label: t('filter_year'), days: 365 },
+        { key: 'all', label: t('filter_all'), days: null },
+    ];
 
     const openAdd = () => {
         setEditIndex(null);
@@ -83,7 +85,7 @@ export default function BedenOlculeri() {
     }, [state.bodyMeasurements, timeFilter]);
 
     const chartData = timeFilteredData.map((entry) => ({
-        date: new Date(entry.date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }),
+        date: new Date(entry.date).toLocaleDateString(),
         ...entry,
     }));
 
@@ -95,9 +97,9 @@ export default function BedenOlculeri() {
         <div className="space-y-6">
             {/* Add button */}
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Beden Ölçüleri</h3>
+                <h3 className="text-lg font-semibold">{t('beden_title')}</h3>
                 <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
-                    + Ölçü Ekle
+                    {t('beden_btn_add')}
                 </button>
             </div>
 
@@ -109,7 +111,7 @@ export default function BedenOlculeri() {
             >
                 <div className="card-body p-4">
                     <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                        <h3 className="font-semibold">Ölçü Grafiği</h3>
+                        <h3 className="font-semibold">{t('beden_chart_title')}</h3>
                     </div>
                     {/* Time filter buttons */}
                     <div className="flex flex-wrap gap-1 mb-2">
@@ -129,7 +131,7 @@ export default function BedenOlculeri() {
                             className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
                             onClick={() => setMeasureFilter('all')}
                         >
-                            Tümü
+                            {t('filter_all')}
                         </button>
                         {MEASUREMENTS.map((m) => (
                             <button
@@ -143,7 +145,7 @@ export default function BedenOlculeri() {
                     </div>
                     {chartData.length < 2 && (
                         <p className="text-xs text-base-content/40 mb-2">
-                            Grafiğin çizilmesi için en az 2 ölçüm kaydı gereklidir.
+                            {t('beden_chart_min_warning')}
                         </p>
                     )}
                     <div className="h-72">
@@ -191,12 +193,12 @@ export default function BedenOlculeri() {
             {state.bodyMeasurements.length > 0 ? (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body p-4">
-                        <h3 className="font-semibold mb-3">Kayıtlar</h3>
+                        <h3 className="font-semibold mb-3">{t('kilo_records')}</h3>
                         <div className="overflow-x-auto">
                             <table className="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Tarih</th>
+                                        <th>{t('common_date')}</th>
                                         {MEASUREMENTS.map((m) => (
                                             <th key={m.key}>{m.label}</th>
                                         ))}
@@ -206,7 +208,7 @@ export default function BedenOlculeri() {
                                 <tbody>
                                     {state.bodyMeasurements.map((entry, i) => (
                                         <tr key={i}>
-                                            <td>{new Date(entry.date).toLocaleDateString('tr-TR')}</td>
+                                            <td>{new Date(entry.date).toLocaleDateString()}</td>
                                             {MEASUREMENTS.map((m) => (
                                                 <td key={m.key}>{entry[m.key] ? `${entry[m.key]} cm` : '—'}</td>
                                             ))}
@@ -237,7 +239,7 @@ export default function BedenOlculeri() {
             ) : (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">Henüz beden ölçüsü kaydı eklenmemiş.</p>
+                        <p className="text-base-content/50">{t('beden_empty_state')}</p>
                     </div>
                 </div>
             )}
@@ -252,11 +254,11 @@ export default function BedenOlculeri() {
                         transition={{ duration: 0.2 }}
                     >
                         <h3 className="font-bold text-lg mb-4">
-                            {editIndex !== null ? 'Ölçü Düzenle' : 'Beden Ölçüsü Ekle'}
+                            {editIndex !== null ? t('beden_modal_edit_title') : t('beden_modal_add_title')}
                         </h3>
                         <div className="space-y-4">
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Tarih</span></label>
+                                <label className="label"><span className="label-text">{t('common_date')}</span></label>
                                 <input
                                     type="date"
                                     className="input input-bordered rounded-xl w-full"
@@ -281,9 +283,9 @@ export default function BedenOlculeri() {
                             </div>
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>İptal</button>
+                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>{t('modal_btn_cancel')}</button>
                             <button className="btn btn-primary rounded-xl" onClick={handleSave}>
-                                {editIndex !== null ? 'Kaydet' : 'Ekle'}
+                                {editIndex !== null ? t('modal_btn_save') : t('modal_btn_add')}
                             </button>
                         </div>
                     </motion.div>
@@ -300,11 +302,11 @@ export default function BedenOlculeri() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <h3 className="font-bold text-lg mb-2">Silmeyi Onayla</h3>
-                        <p className="text-sm text-base-content/60">Bu ölçü kaydını silmek istediğinize emin misiniz?</p>
+                        <h3 className="font-bold text-lg mb-2">{t('common_confirm_delete')}</h3>
+                        <p className="text-sm text-base-content/60">{t('beden_delete_warning')}</p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>İptal</button>
-                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>Sil</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>{t('modal_btn_delete')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />

@@ -1,21 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
-
-const DAYS = [
-    { key: 'pazartesi', label: 'Pzt' },
-    { key: 'sali', label: 'Sal' },
-    { key: 'carsamba', label: 'Çar' },
-    { key: 'persembe', label: 'Per' },
-    { key: 'cuma', label: 'Cum' },
-    { key: 'cumartesi', label: 'Cmt' },
-    { key: 'pazar', label: 'Paz' },
-];
-
-const FULL_DAYS = {
-    pazartesi: 'Pazartesi', sali: 'Salı', carsamba: 'Çarşamba',
-    persembe: 'Perşembe', cuma: 'Cuma', cumartesi: 'Cumartesi', pazar: 'Pazar',
-};
+import { useTranslation } from '../hooks/useTranslation';
 
 // Generate half-hour time slots
 const TIME_SLOTS = [];
@@ -27,12 +13,24 @@ for (let h = 0; h < 24; h++) {
 
 export default function DiyetProgrami() {
     const { state, dispatch } = useStore();
+    const { t } = useTranslation();
     const [selectedDay, setSelectedDay] = useState('pazartesi');
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [form, setForm] = useState({ name: '', time: '', foods: '', note: '' });
 
+    const DAYS_CONFIG = [
+        { key: 'pazartesi', label: t('day_short_pzt', 'Pzt'), full: t('day_full_pzt', 'Pazartesi') },
+        { key: 'sali', label: t('day_short_sal', 'Sal'), full: t('day_full_sal', 'Salı') },
+        { key: 'carsamba', label: t('day_short_car', 'Çar'), full: t('day_full_car', 'Çarşamba') },
+        { key: 'persembe', label: t('day_short_per', 'Per'), full: t('day_full_per', 'Perşembe') },
+        { key: 'cuma', label: t('day_short_cum', 'Cum'), full: t('day_full_cum', 'Cuma') },
+        { key: 'cumartesi', label: t('day_short_cmt', 'Cmt'), full: t('day_full_cmt', 'Cumartesi') },
+        { key: 'pazar', label: t('day_short_paz', 'Paz'), full: t('day_full_paz', 'Pazar') },
+    ];
+
+    const currentDayConfig = DAYS_CONFIG.find(d => d.key === selectedDay);
     const meals = state.dietProgram[selectedDay] || [];
 
     const openAdd = () => {
@@ -83,7 +81,7 @@ export default function DiyetProgrami() {
         <div>
             {/* Day tabs */}
             <div className="flex flex-wrap gap-2 mb-5">
-                {DAYS.map((day) => (
+                {DAYS_CONFIG.map((day) => (
                     <button
                         key={day.key}
                         className={`btn btn-sm rounded-xl font-medium transition-all duration-200 ${selectedDay === day.key
@@ -98,9 +96,9 @@ export default function DiyetProgrami() {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">{FULL_DAYS[selectedDay]}</h3>
+                <h3 className="text-lg font-semibold">{currentDayConfig.full}</h3>
                 <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
-                    + Öğün Ekle
+                    {t('diet_btn_add', '+ Öğün Ekle')}
                 </button>
             </div>
 
@@ -108,7 +106,7 @@ export default function DiyetProgrami() {
             {meals.length === 0 ? (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">Bu gün için öğün eklenmemiş.</p>
+                        <p className="text-base-content/50">{t('prog_diyet_empty', 'Bu gün için öğün eklenmemiş.')}</p>
                     </div>
                 </div>
             ) : (
@@ -146,14 +144,14 @@ export default function DiyetProgrami() {
                                             className="btn btn-ghost btn-xs text-info"
                                             style={{ transform: 'scaleX(-1)' }}
                                             onClick={() => openEdit(i)}
-                                            title="Düzenle"
+                                            title={t('modal_btn_edit', 'Düzenle')}
                                         >
                                             ✎
                                         </button>
                                         <button
                                             className="btn btn-ghost btn-xs text-error"
                                             onClick={() => setDeleteIndex(i)}
-                                            title="Sil"
+                                            title={t('modal_btn_delete', 'Sil')}
                                         >
                                             ✕
                                         </button>
@@ -175,57 +173,57 @@ export default function DiyetProgrami() {
                         transition={{ duration: 0.2 }}
                     >
                         <h3 className="font-bold text-lg mb-4">
-                            {editIndex !== null ? 'Öğün Düzenle' : 'Öğün Ekle'} – {FULL_DAYS[selectedDay]}
+                            {editIndex !== null ? t('diet_modal_edit', 'Öğün Düzenle') : t('diet_modal_add', 'Öğün Ekle')} – {currentDayConfig.full}
                         </h3>
                         <div className="space-y-4">
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Öğün Adı</span></label>
+                                <label className="label"><span className="label-text">{t('diet_meal_name', 'Öğün Adı')}</span></label>
                                 <input
                                     type="text"
                                     className="input input-bordered rounded-xl w-full"
                                     value={form.name}
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                    placeholder="Kahvaltı, Öğle Yemeği..."
+                                    placeholder={t('diet_meal_name_ph', 'Kahvaltı, Öğle Yemeği...')}
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Saat</span></label>
+                                <label className="label"><span className="label-text">{t('diet_time', 'Saat')}</span></label>
                                 <select
                                     className="select select-bordered rounded-xl w-full"
                                     value={form.time}
                                     onChange={(e) => setForm({ ...form, time: e.target.value })}
                                 >
-                                    <option value="">Saat seçin</option>
+                                    <option value="">{t('diet_time_ph', 'Saat seçin')}</option>
                                     {TIME_SLOTS.map((t) => (
                                         <option key={t} value={t}>{t}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Besinler (virgülle ayırın)</span></label>
+                                <label className="label"><span className="label-text">{t('diet_foods', 'Besinler (virgülle ayırın)')}</span></label>
                                 <textarea
                                     className="textarea textarea-bordered rounded-xl w-full"
                                     value={form.foods}
                                     onChange={(e) => setForm({ ...form, foods: e.target.value })}
-                                    placeholder="Yumurta, Peynir, Ekmek, Çay..."
+                                    placeholder={t('diet_foods_ph', 'Yumurta, Peynir, Ekmek, Çay...')}
                                     rows={3}
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Not (opsiyonel)</span></label>
+                                <label className="label"><span className="label-text">{t('foto_note', 'Not (opsiyonel)')}</span></label>
                                 <input
                                     type="text"
                                     className="input input-bordered rounded-xl w-full"
                                     value={form.note}
                                     onChange={(e) => setForm({ ...form, note: e.target.value })}
-                                    placeholder="Ekstra bilgi..."
+                                    placeholder={t('diet_note_ph', 'Ekstra bilgi...')}
                                 />
                             </div>
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>İptal</button>
+                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>{t('modal_btn_cancel', 'İptal')}</button>
                             <button className="btn btn-primary rounded-xl" onClick={handleSave}>
-                                {editIndex !== null ? 'Kaydet' : 'Ekle'}
+                                {editIndex !== null ? t('modal_btn_save', 'Kaydet') : t('modal_btn_add', 'Ekle')}
                             </button>
                         </div>
                     </motion.div>
@@ -242,13 +240,13 @@ export default function DiyetProgrami() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <h3 className="font-bold text-lg mb-2">Silmeyi Onayla</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('common_confirm_delete', 'Silmeyi Onayla')}</h3>
                         <p className="text-sm text-base-content/60">
-                            "<span className="font-medium text-base-content">{meals[deleteIndex]?.name}</span>" öğününü silmek istediğinize emin misiniz?
+                            "<span className="font-medium text-base-content">{meals[deleteIndex]?.name}</span>" {t('diet_delete_msg', 'öğününü silmek istediğinize emin misiniz?')}
                         </p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>İptal</button>
-                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>Sil</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>{t('modal_btn_cancel', 'İptal')}</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>{t('modal_btn_delete', 'Sil')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />

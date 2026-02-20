@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function FotoTakip() {
     const { state, dispatch } = useStore();
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const [form, setForm] = useState({ date: '', note: '' });
     const [preview, setPreview] = useState(null);
@@ -68,9 +70,9 @@ export default function FotoTakip() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Fotoğraflar</h3>
+                <h3 className="text-lg font-semibold">{t('foto_title', 'Fotoğraflar')}</h3>
                 <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowModal(true)}>
-                    + Fotoğraf Ekle
+                    {t('foto_btn_add', '+ Fotoğraf Ekle')}
                 </button>
             </div>
 
@@ -123,8 +125,8 @@ export default function FotoTakip() {
             ) : (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">Henüz fotoğraf eklenmemiş.</p>
-                        <p className="text-sm text-base-content/30">Aylık ilerleme fotoğraflarınızı buraya ekleyin.</p>
+                        <p className="text-base-content/50">{t('foto_empty', 'Henüz fotoğraf eklenmemiş.')}</p>
+                        <p className="text-sm text-base-content/30">{t('foto_empty_desc', 'Aylık ilerleme fotoğraflarınızı buraya ekleyin.')}</p>
                     </div>
                 </div>
             )}
@@ -163,10 +165,10 @@ export default function FotoTakip() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <h3 className="font-bold text-lg mb-4">Fotoğraf Ekle</h3>
+                        <h3 className="font-bold text-lg mb-4">{t('foto_btn_add', 'Fotoğraf Ekle').replace('+', '').trim()}</h3>
                         <div className="space-y-4">
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Tarih</span></label>
+                                <label className="label"><span className="label-text">{t('common_date', 'Tarih')}</span></label>
                                 <input
                                     type="date"
                                     className="input input-bordered rounded-xl w-full"
@@ -175,17 +177,17 @@ export default function FotoTakip() {
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Not (opsiyonel)</span></label>
+                                <label className="label"><span className="label-text">{t('foto_note', 'Not (opsiyonel)')}</span></label>
                                 <input
                                     type="text"
                                     className="input input-bordered rounded-xl w-full"
                                     value={form.note}
                                     onChange={(e) => setForm({ ...form, note: e.target.value })}
-                                    placeholder="Ön, yan, arka..."
+                                    placeholder={t('foto_note_ph', 'Ön, yan, arka...')}
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Fotoğraf</span></label>
+                                <label className="label"><span className="label-text">{t('foto_photo', 'Fotoğraf')}</span></label>
                                 <input
                                     ref={fileRef}
                                     type="file"
@@ -197,14 +199,14 @@ export default function FotoTakip() {
                             {preview && (
                                 <img
                                     src={preview}
-                                    alt="Önizleme"
+                                    alt={t('foto_preview', 'Önizleme')}
                                     className="w-full max-h-64 object-contain rounded-xl"
                                 />
                             )}
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setPreview(null); }}>İptal</button>
-                            <button className="btn btn-primary rounded-xl" onClick={handleAdd}>Ekle</button>
+                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setPreview(null); }}>{t('modal_btn_cancel', 'İptal')}</button>
+                            <button className="btn btn-primary rounded-xl" onClick={handleAdd}>{t('modal_btn_add', 'Ekle')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => { setShowModal(false); setPreview(null); }} />
@@ -220,11 +222,11 @@ export default function FotoTakip() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <h3 className="font-bold text-lg mb-2">Silmeyi Onayla</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('common_confirm_delete', 'Silmeyi Onayla')}</h3>
                         <p className="text-sm text-base-content/60">Bu fotoğrafı silmek istediğinize emin misiniz?</p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>İptal</button>
-                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>Sil</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>{t('modal_btn_cancel', 'İptal')}</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>{t('modal_btn_delete', 'Sil')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />

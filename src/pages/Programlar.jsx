@@ -2,20 +2,22 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiyetProgrami from '../components/DiyetProgrami';
 import GymProgrami from '../components/GymProgrami';
-
-const tabs = [
-    { key: 'diyet', label: 'Diyet Programı' },
-    { key: 'gym', label: 'Gym Programı' },
-];
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Programlar() {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('diyet');
+
+    const tabs = [
+        { key: 'diyet', label: t('prog_tab_diyet', 'Diyet Programı') },
+        { key: 'gym', label: t('prog_tab_gym', 'Gym Programı') },
+    ];
 
     return (
         <div>
             <div className="mb-6">
-                <h2 className="text-2xl font-bold">Programlar</h2>
-                <p className="text-sm text-base-content/50 mt-1">Diyet ve gym programlarınızı yönetin</p>
+                <h2 className="text-2xl font-bold">{t('prog_title', 'Programlar')}</h2>
+                <p className="text-sm text-base-content/50 mt-1">{t('prog_desc', 'Diyet ve gym programlarınızı yönetin')}</p>
             </div>
 
             {/* Tabs */}

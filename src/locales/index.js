@@ -73,6 +73,78 @@ const tr = {
     takip_tab_beden: 'Beden Ölçüleri',
     takip_tab_gym: 'Gym Takip',
     takip_tab_foto: 'Fotoğraflar',
+
+    // Kilo Takip
+    kilo_title: 'Kilo Takip',
+    kilo_btn_add: '+ Kilo Ekle',
+    kilo_chart_title: 'Kilo Grafiği',
+    kilo_chart_min_warning: 'Grafiğin çizilmesi için en az 2 kilo kaydı gereklidir.',
+    kilo_records: 'Kayıtlar',
+    kilo_empty_state: 'Henüz kilo kaydı eklenmemiş.',
+    kilo_modal_add_title: 'Kilo Ekle',
+    kilo_modal_edit_title: 'Kilo Düzenle',
+    kilo_modal_date: 'Tarih',
+    kilo_modal_weight: 'Kilo (kg)',
+    kilo_delete_warning: 'Bu kilo kaydını silmek istediğinize emin misiniz?',
+
+    // Beden Ölçüleri
+    beden_title: 'Beden Ölçüleri',
+    beden_btn_add: '+ Ölçü Ekle',
+    beden_chart_title: 'Ölçü Grafiği',
+    beden_chart_min_warning: 'Grafiğin çizilmesi için en az 2 ölçüm kaydı gereklidir.',
+    beden_empty_state: 'Henüz beden ölçüsü kaydı eklenmemiş.',
+    beden_modal_add_title: 'Beden Ölçüsü Ekle',
+    beden_modal_edit_title: 'Ölçü Düzenle',
+    beden_delete_warning: 'Bu ölçü kaydını silmek istediğinize emin misiniz?',
+
+    // Filters & Common
+    filter_week: 'Son Hafta',
+    filter_month: 'Son Ay',
+    filter_6months: 'Son 6 Ay',
+    filter_year: 'Son Yıl',
+    filter_all: 'Tümü',
+    common_date: 'Tarih',
+    common_weight: 'Kilo',
+    common_confirm_delete: 'Silmeyi Onayla',
+
+    // Extra added strings
+    sidebar_desc: 'Diyet & Gym Takip',
+    gym_btn_add: '+ Antrenman Ekle',
+    gym_empty: 'Bu gün için antrenman kaydı yok.',
+    gym_moves_count: 'hareket',
+    gym_move: 'Hareket',
+    gym_sets: 'Set',
+    gym_reps: 'Tekrar',
+    gym_duration: 'Süre',
+    gym_weight: 'Ağırlık',
+    gym_modal_edit: 'Antrenman Düzenle',
+    gym_modal_add: 'Antrenman Ekle',
+    gym_exercises: 'Hareketler',
+    gym_add_row: '+ Satır Ekle',
+    gym_name: 'Adı',
+    gym_delete_msg: 'Bu antrenman kaydını silmek istediğinize emin misiniz?',
+
+    foto_title: 'Fotoğraflar',
+    foto_btn_add: '+ Fotoğraf Ekle',
+    foto_empty: 'Henüz fotoğraf eklenmemiş.',
+    foto_empty_desc: 'Aylık ilerleme fotoğraflarınızı buraya ekleyin.',
+    foto_note: 'Not (opsiyonel)',
+    foto_note_ph: 'Ön, yan, arka...',
+    foto_photo: 'Fotoğraf',
+    foto_preview: 'Önizleme',
+
+    diet_btn_add: '+ Öğün Ekle',
+    diet_time: 'Saat',
+    diet_food: 'Yemek / İçecek',
+    diet_cal: 'Kalori (kcal)',
+    diet_modal_edit: 'Öğün Düzenle',
+    diet_modal_add: 'Öğün Ekle',
+    diet_delete_msg: 'Bu öğünü silmek istediğinize emin misiniz?',
+
+    prog_diyet: 'Diyet Programı',
+    prog_gym: 'Gym Programı',
+    prog_diyet_empty: 'Bu gün için öğün eklenmemiş.',
+    prog_gym_empty: 'Bu gün için hareket eklenmemiş.',
 };
 
 // English Translations
@@ -143,13 +215,85 @@ const en = {
     settings_import_success: 'Data imported successfully!',
     settings_import_error: 'An error occurred reading the file or invalid format.',
 
-    // Tracking Tabs
+    // Takip Tabs
     takip_title: 'Tracking',
     takip_desc: 'Log your progress and track with charts',
     takip_tab_kilo: 'Weight Tracking',
     takip_tab_beden: 'Body Measurements',
     takip_tab_gym: 'Gym Tracking',
     takip_tab_foto: 'Photos',
+
+    // Kilo Tracking
+    kilo_title: 'Weight Tracking',
+    kilo_btn_add: '+ Add Weight',
+    kilo_chart_title: 'Weight Chart',
+    kilo_chart_min_warning: 'At least 2 weight records are required to draw the chart.',
+    kilo_records: 'Records',
+    kilo_empty_state: 'No weight records added yet.',
+    kilo_modal_add_title: 'Add Weight',
+    kilo_modal_edit_title: 'Edit Weight',
+    kilo_modal_date: 'Date',
+    kilo_modal_weight: 'Weight (kg)',
+    kilo_delete_warning: 'Are you sure you want to delete this weight record?',
+
+    // Body Measurements
+    beden_title: 'Body Measurements',
+    beden_btn_add: '+ Add Measurement',
+    beden_chart_title: 'Measurement Chart',
+    beden_chart_min_warning: 'At least 2 records are required to draw the chart.',
+    beden_empty_state: 'No Body measurement records added yet.',
+    beden_modal_add_title: 'Add Body Measurement',
+    beden_modal_edit_title: 'Edit Measurement',
+    beden_delete_warning: 'Are you sure you want to delete this measurement record?',
+
+    // Filters & Common
+    filter_week: 'Last Week',
+    filter_month: 'Last Month',
+    filter_6months: 'Last 6 Months',
+    filter_year: 'Last Year',
+    filter_all: 'All',
+    common_date: 'Date',
+    common_weight: 'Weight',
+    common_confirm_delete: 'Confirm Deletion',
+
+    // Extra added strings
+    sidebar_desc: 'Diet & Gym Tracking',
+    gym_btn_add: '+ Add Workout',
+    gym_empty: 'No workout record for this day.',
+    gym_moves_count: 'exercises',
+    gym_move: 'Exercise',
+    gym_sets: 'Sets',
+    gym_reps: 'Reps',
+    gym_duration: 'Duration',
+    gym_weight: 'Weight',
+    gym_modal_edit: 'Edit Workout',
+    gym_modal_add: 'Add Workout',
+    gym_exercises: 'Exercises',
+    gym_add_row: '+ Add Row',
+    gym_name: 'Name',
+    gym_delete_msg: 'Are you sure you want to delete this workout record?',
+
+    foto_title: 'Photos',
+    foto_btn_add: '+ Add Photo',
+    foto_empty: 'No photos added yet.',
+    foto_empty_desc: 'Add your monthly progress photos here.',
+    foto_note: 'Note (optional)',
+    foto_note_ph: 'Front, side, back...',
+    foto_photo: 'Photo',
+    foto_preview: 'Preview',
+
+    diet_btn_add: '+ Add Meal',
+    diet_time: 'Time',
+    diet_food: 'Food / Drink',
+    diet_cal: 'Calories (kcal)',
+    diet_modal_edit: 'Edit Meal',
+    diet_modal_add: 'Add Meal',
+    diet_delete_msg: 'Are you sure you want to delete this meal?',
+
+    prog_diyet: 'Diet Program',
+    prog_gym: 'Gym Program',
+    prog_diyet_empty: 'No meal added for this day.',
+    prog_gym_empty: 'No exercise added for this day.',
 };
 
 const translations = { tr, en };

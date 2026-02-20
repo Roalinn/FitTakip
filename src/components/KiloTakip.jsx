@@ -1,26 +1,28 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../hooks/useTranslation';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
-const FILTERS = [
-    { key: 'week', label: 'Son Hafta', days: 7 },
-    { key: 'month', label: 'Son Ay', days: 30 },
-    { key: '6months', label: 'Son 6 Ay', days: 180 },
-    { key: 'year', label: 'Son Yıl', days: 365 },
-    { key: 'all', label: 'Tümü', days: null },
-];
-
 export default function KiloTakip() {
     const { state, dispatch } = useStore();
+    const { t } = useTranslation();
     const [showAddModal, setShowAddModal] = useState(false);
     const [form, setForm] = useState({ date: '', weight: '' });
     const [chartFilter, setChartFilter] = useState('all');
     const [editIndex, setEditIndex] = useState(null);
     const [editForm, setEditForm] = useState({ date: '', weight: '' });
     const [deleteIndex, setDeleteIndex] = useState(null);
+
+    const FILTERS = [
+        { key: 'week', label: t('filter_week'), days: 7 },
+        { key: 'month', label: t('filter_month'), days: 30 },
+        { key: '6months', label: t('filter_6months'), days: 180 },
+        { key: 'year', label: t('filter_year'), days: 365 },
+        { key: 'all', label: t('filter_all'), days: null },
+    ];
 
     const handleAdd = () => {
         if (!form.date || !form.weight) return;
@@ -72,9 +74,9 @@ export default function KiloTakip() {
         <div className="space-y-6">
             {/* Header with add button */}
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Kilo Takip</h3>
+                <h3 className="text-lg font-semibold">{t('kilo_title')}</h3>
                 <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowAddModal(true)}>
-                    + Kilo Ekle
+                    {t('kilo_btn_add')}
                 </button>
             </div>
 
@@ -86,7 +88,7 @@ export default function KiloTakip() {
             >
                 <div className="card-body p-4">
                     <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                        <h3 className="font-semibold">Kilo Grafiği</h3>
+                        <h3 className="font-semibold">{t('kilo_chart_title')}</h3>
                         <div className="flex flex-wrap gap-1">
                             {FILTERS.map((f) => (
                                 <button
@@ -101,7 +103,7 @@ export default function KiloTakip() {
                     </div>
                     {chartData.length < 2 && (
                         <p className="text-xs text-base-content/40 mb-2">
-                            Grafiğin çizilmesi için en az 2 kilo kaydı gereklidir.
+                            {t('kilo_chart_min_warning')}
                         </p>
                     )}
                     <div className="h-64">
@@ -126,7 +128,7 @@ export default function KiloTakip() {
                                         borderRadius: '12px',
                                         color: '#fff',
                                     }}
-                                    formatter={(value) => [`${value} kg`, 'Kilo']}
+                                    formatter={(value) => [`${value} kg`, t('common_weight')]}
                                 />
                                 <Line
                                     type="monotone"
@@ -146,20 +148,20 @@ export default function KiloTakip() {
             {state.weightLog.length > 0 ? (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body p-4">
-                        <h3 className="font-semibold mb-3">Kayıtlar</h3>
+                        <h3 className="font-semibold mb-3">{t('kilo_records')}</h3>
                         <div className="overflow-x-auto">
                             <table className="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Tarih</th>
-                                        <th>Kilo</th>
+                                        <th>{t('common_date')}</th>
+                                        <th>{t('common_weight')}</th>
                                         <th className="w-20"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {state.weightLog.map((entry, i) => (
                                         <tr key={i}>
-                                            <td>{new Date(entry.date).toLocaleDateString('tr-TR')}</td>
+                                            <td>{new Date(entry.date).toLocaleDateString()}</td>
                                             <td className="font-medium">{entry.weight} kg</td>
                                             <td>
                                                 <div className="flex gap-1">
@@ -188,7 +190,7 @@ export default function KiloTakip() {
             ) : (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">Henüz kilo kaydı eklenmemiş.</p>
+                        <p className="text-base-content/50">{t('kilo_empty_state')}</p>
                     </div>
                 </div>
             )}
@@ -202,10 +204,10 @@ export default function KiloTakip() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <h3 className="font-bold text-lg mb-4">Kilo Ekle</h3>
+                        <h3 className="font-bold text-lg mb-4">{t('kilo_modal_add_title')}</h3>
                         <div className="space-y-4">
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Tarih</span></label>
+                                <label className="label"><span className="label-text">{t('kilo_modal_date')}</span></label>
                                 <input
                                     type="date"
                                     className="input input-bordered rounded-xl w-full"
@@ -214,7 +216,7 @@ export default function KiloTakip() {
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Kilo (kg)</span></label>
+                                <label className="label"><span className="label-text">{t('kilo_modal_weight')}</span></label>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -226,8 +228,8 @@ export default function KiloTakip() {
                             </div>
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setShowAddModal(false)}>İptal</button>
-                            <button className="btn btn-primary btn-sm rounded-xl" onClick={handleAdd}>Ekle</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setShowAddModal(false)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-primary btn-sm rounded-xl" onClick={handleAdd}>{t('modal_btn_add')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setShowAddModal(false)} />
@@ -243,10 +245,10 @@ export default function KiloTakip() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <h3 className="font-bold text-lg mb-4">Kilo Düzenle</h3>
+                        <h3 className="font-bold text-lg mb-4">{t('kilo_modal_edit_title')}</h3>
                         <div className="space-y-4">
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Tarih</span></label>
+                                <label className="label"><span className="label-text">{t('kilo_modal_date')}</span></label>
                                 <input
                                     type="date"
                                     className="input input-bordered rounded-xl w-full"
@@ -255,7 +257,7 @@ export default function KiloTakip() {
                                 />
                             </div>
                             <div className="form-control">
-                                <label className="label"><span className="label-text">Kilo (kg)</span></label>
+                                <label className="label"><span className="label-text">{t('kilo_modal_weight')}</span></label>
                                 <input
                                     type="number"
                                     step="0.1"
@@ -266,8 +268,8 @@ export default function KiloTakip() {
                             </div>
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setEditIndex(null)}>İptal</button>
-                            <button className="btn btn-primary btn-sm rounded-xl" onClick={handleEdit}>Kaydet</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setEditIndex(null)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-primary btn-sm rounded-xl" onClick={handleEdit}>{t('modal_btn_save')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setEditIndex(null)} />
@@ -283,11 +285,11 @@ export default function KiloTakip() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <h3 className="font-bold text-lg mb-2">Silmeyi Onayla</h3>
-                        <p className="text-sm text-base-content/60">Bu kilo kaydını silmek istediğinize emin misiniz?</p>
+                        <h3 className="font-bold text-lg mb-2">{t('common_confirm_delete')}</h3>
+                        <p className="text-sm text-base-content/60">{t('kilo_delete_warning')}</p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>İptal</button>
-                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>Sil</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>{t('modal_btn_delete')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />

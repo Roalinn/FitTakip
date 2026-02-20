@@ -59,7 +59,7 @@ export default function Sidebar({ activePage, setActivePage, isOpen, onClose }) 
                 <h1 className="text-2xl font-extrabold tracking-tight">
                     <span className="text-primary">Fit</span>Takip
                 </h1>
-                <p className="text-xs text-base-content/50 mt-1">Diyet & Gym Takip</p>
+                <p className="text-xs text-base-content/50 mt-1">{t('sidebar_desc', 'Diyet & Gym Takip')}</p>
             </div>
 
             {/* Navigation */}
