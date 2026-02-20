@@ -13,6 +13,9 @@ const defaultState = {
         startWeight: null,
         targetWeight: null,
         targetDate: null,
+        height: null,
+        age: null,
+        gender: 'erkek',
     },
     dietProgram: {
         pazartesi: [], sali: [], carsamba: [], persembe: [], cuma: [], cumartesi: [], pazar: [],
