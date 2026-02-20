@@ -8,6 +8,8 @@ const defaultState = {
     settings: {
         theme: 'dark',
         language: 'en',
+        activeTakipTab: 'kilo',
+        activeProgramTab: 'diyet',
     },
     goal: {
         startWeight: null,

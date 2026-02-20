@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { showToast } from '../utils/toast';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -15,7 +16,7 @@ export default function BedenOlculeri() {
     const [measureFilter, setMeasureFilter] = useState('all');
     const [timeFilter, setTimeFilter] = useState('all');
     const [form, setForm] = useState({
-        date: '',
+        date: new Date().toISOString().split('T')[0],
         chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '',
     });
 
@@ -38,7 +39,7 @@ export default function BedenOlculeri() {
 
     const openAdd = () => {
         setEditIndex(null);
-        setForm({ date: '', chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '' });
+        setForm({ date: new Date().toISOString().split('T')[0], chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '' });
         setShowModal(true);
     };
 
@@ -63,15 +64,17 @@ export default function BedenOlculeri() {
         } else {
             dispatch({ type: 'ADD_BODY_MEASUREMENT', payload: entry });
         }
-        setForm({ date: '', chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '' });
+        setForm({ date: new Date().toISOString().split('T')[0], chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '' });
         setEditIndex(null);
         setShowModal(false);
+        showToast(editIndex !== null ? t('toast_updated', 'Kayıt güncellendi') : t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const confirmDelete = () => {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_BODY_MEASUREMENT', index: deleteIndex });
             setDeleteIndex(null);
+            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 
@@ -160,6 +163,7 @@ export default function BedenOlculeri() {
                                     axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                                 />
                                 <YAxis
+                                    domain={['dataMin - 1', 'dataMax + 1']}
                                     tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
                                     axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                                     unit=" cm"
@@ -240,8 +244,9 @@ export default function BedenOlculeri() {
                 </div>
             ) : (
                 <div className="card bg-base-200 rounded-xl">
-                    <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">{t('beden_empty_state')}</p>
+                    <div className="card-body items-center text-center py-12 text-base-content/40">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <p>{t('beden_empty_state')}</p>
                     </div>
                 </div>
             )}

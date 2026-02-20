@@ -176,6 +176,11 @@ const tr = {
     gym_duration_min: 'Süre (dk)',
     gym_prog_delete_msg: 'hareketini silmek istediğinize emin misiniz?',
     modal_btn_edit: 'Düzenle',
+
+    toast_added: 'Kayıt başarıyla eklendi',
+    toast_updated: 'Kayıt başarıyla güncellendi',
+    toast_deleted: 'Kayıt başarıyla silindi',
+    toast_copied: 'Program başarıyla kopyalandı',
 };
 
 // English Translations
@@ -356,6 +361,11 @@ const en = {
     gym_duration_min: 'Duration (min)',
     gym_prog_delete_msg: 'are you sure you want to delete this exercise?',
     modal_btn_edit: 'Edit',
+
+    toast_added: 'Record added successfully',
+    toast_updated: 'Record updated successfully',
+    toast_deleted: 'Record deleted successfully',
+    toast_copied: 'Program copied successfully',
 };
 
 const translations = { tr, en };

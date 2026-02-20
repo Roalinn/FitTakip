@@ -6,9 +6,12 @@ import GymTakip from '../components/GymTakip';
 import FotoTakip from '../components/FotoTakip';
 import { useTranslation } from '../hooks/useTranslation';
 
+import { useStore } from '../store/useStore';
+
 export default function Takip() {
+    const { state, dispatch } = useStore();
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState('kilo');
+    const activeTab = state.settings.activeTakipTab || 'kilo';
 
     const tabs = [
         { key: 'kilo', label: t('takip_tab_kilo') },
@@ -41,7 +44,7 @@ export default function Takip() {
                         role="tab"
                         className={`tab rounded-lg font-medium transition-all duration-200 ${activeTab === tab.key ? 'tab-active bg-primary text-primary-content' : ''
                             }`}
-                        onClick={() => setActiveTab(tab.key)}
+                        onClick={() => dispatch({ type: 'SET_SETTINGS', payload: { activeTakipTab: tab.key } })}
                     >
                         {tab.label}
                     </button>

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { showToast } from '../utils/toast';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -10,7 +11,7 @@ export default function KiloTakip() {
     const { state, dispatch } = useStore();
     const { t } = useTranslation();
     const [showAddModal, setShowAddModal] = useState(false);
-    const [form, setForm] = useState({ date: '', weight: '' });
+    const [form, setForm] = useState({ date: new Date().toISOString().split('T')[0], weight: '' });
     const [chartFilter, setChartFilter] = useState('all');
     const [editIndex, setEditIndex] = useState(null);
     const [editForm, setEditForm] = useState({ date: '', weight: '' });
@@ -30,8 +31,9 @@ export default function KiloTakip() {
             type: 'ADD_WEIGHT',
             payload: { date: form.date, weight: parseFloat(form.weight) },
         });
-        setForm({ date: '', weight: '' });
+        setForm({ date: new Date().toISOString().split('T')[0], weight: '' });
         setShowAddModal(false);
+        showToast(t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const openEdit = (index) => {
@@ -48,12 +50,14 @@ export default function KiloTakip() {
             payload: { date: editForm.date, weight: parseFloat(editForm.weight) },
         });
         setEditIndex(null);
+        showToast(t('toast_updated', 'Kayıt güncellendi'), 'success');
     };
 
     const confirmDelete = () => {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_WEIGHT', index: deleteIndex });
             setDeleteIndex(null);
+            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 
@@ -75,7 +79,10 @@ export default function KiloTakip() {
             {/* Header with add button */}
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">{t('kilo_title')}</h3>
-                <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowAddModal(true)}>
+                <button className="btn btn-primary btn-sm rounded-xl" onClick={() => {
+                    setForm({ date: new Date().toISOString().split('T')[0], weight: '' });
+                    setShowAddModal(true);
+                }}>
                     {t('kilo_btn_add')}
                 </button>
             </div>
@@ -116,7 +123,7 @@ export default function KiloTakip() {
                                     axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                                 />
                                 <YAxis
-                                    domain={['auto', 'auto']}
+                                    domain={['dataMin - 1', 'dataMax + 1']}
                                     tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
                                     axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                                     unit=" kg"
@@ -189,8 +196,9 @@ export default function KiloTakip() {
                 </div>
             ) : (
                 <div className="card bg-base-200 rounded-xl">
-                    <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">{t('kilo_empty_state')}</p>
+                    <div className="card-body items-center text-center py-12 text-base-content/40">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>
+                        <p>{t('kilo_empty_state')}</p>
                     </div>
                 </div>
             )}

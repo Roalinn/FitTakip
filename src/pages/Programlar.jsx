@@ -4,9 +4,12 @@ import DiyetProgrami from '../components/DiyetProgrami';
 import GymProgrami from '../components/GymProgrami';
 import { useTranslation } from '../hooks/useTranslation';
 
+import { useStore } from '../store/useStore';
+
 export default function Programlar() {
+    const { state, dispatch } = useStore();
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState('diyet');
+    const activeTab = state.settings.activeProgramTab || 'diyet';
 
     const tabs = [
         { key: 'diyet', label: t('prog_tab_diyet', 'Diyet Programı') },
@@ -28,7 +31,7 @@ export default function Programlar() {
                         role="tab"
                         className={`tab rounded-lg font-medium transition-all duration-200 ${activeTab === tab.key ? 'tab-active bg-primary text-primary-content' : ''
                             }`}
-                        onClick={() => setActiveTab(tab.key)}
+                        onClick={() => dispatch({ type: 'SET_SETTINGS', payload: { activeProgramTab: tab.key } })}
                     >
                         {tab.label}
                     </button>

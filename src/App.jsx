@@ -5,6 +5,7 @@ import AnaHedef from './pages/AnaHedef';
 import Programlar from './pages/Programlar';
 import Takip from './pages/Takip';
 import Ayarlar from './pages/Ayarlar';
+import Toast from './components/Toast';
 
 const pages = {
     anaHedef: AnaHedef,
@@ -28,6 +29,7 @@ export default function App() {
 
     return (
         <div className="flex h-screen bg-gradient-to-br from-base-100 via-base-200/50 to-base-300/80 text-base-content overflow-hidden">
+            <Toast />
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <motion.div

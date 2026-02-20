@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { showToast } from '../utils/toast';
 
 
 export default function DiyetProgrami() {
@@ -58,15 +59,30 @@ export default function DiyetProgrami() {
         } else {
             dispatch({ type: 'ADD_DIET_MEAL', day: selectedDay, payload });
         }
-        setForm({ name: '', time: '', foods: '', note: '' });
+        setForm({ name: '', time: '08:00', foods: '', note: '' });
         setEditIndex(null);
         setShowModal(false);
+        showToast(editIndex !== null ? t('toast_updated', 'Kayıt güncellendi') : t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
+    };
+
+    const handleCopy = () => {
+        sessionStorage.setItem('fittakip_copied_diet', JSON.stringify(meals));
+        showToast(t('toast_copied', 'Program başarıyla kopyalandı'), 'success');
+    };
+
+    const handlePaste = () => {
+        const copied = sessionStorage.getItem('fittakip_copied_diet');
+        if (copied) {
+            dispatch({ type: 'SET_DIET_PROGRAM', day: selectedDay, payload: JSON.parse(copied) });
+            showToast(t('toast_updated', 'Kayıt güncellendi'), 'success');
+        }
     };
 
     const confirmDelete = () => {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_DIET_MEAL', day: selectedDay, index: deleteIndex });
             setDeleteIndex(null);
+            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 
@@ -89,17 +105,29 @@ export default function DiyetProgrami() {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">{currentDayConfig.full}</h3>
-                <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
-                    {t('diet_btn_add', '+ Öğün Ekle')}
-                </button>
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                    {currentDayConfig.full}
+                </h3>
+                <div className="flex items-center gap-2">
+                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handleCopy} title="Programı Kopyala">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    </button>
+                    {sessionStorage.getItem('fittakip_copied_diet') && (
+                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handlePaste} title="Yapıştır">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                        </button>
+                    )}
+                    <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
+                        {t('diet_btn_add', '+ Öğün Ekle')}
+                    </button>
+                </div>
             </div>
 
-            {/* Meals list */}
             {meals.length === 0 ? (
                 <div className="card bg-base-200 rounded-xl">
-                    <div className="card-body items-center text-center py-12">
-                        <p className="text-base-content/50">{t('prog_diyet_empty', 'Bu gün için öğün eklenmemiş.')}</p>
+                    <div className="card-body items-center text-center py-12 text-base-content/40">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        <p>{t('prog_diyet_empty', 'Bu gün için öğün eklenmemiş.')}</p>
                     </div>
                 </div>
             ) : (
