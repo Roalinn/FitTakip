@@ -356,21 +356,20 @@ export default function GymTakip() {
                                                         </div>
                                                         <div className="pr-14 space-y-2">
                                                             {log.exercises.map((ex, j) => (
-                                                                <div key={j} className="flex flex-wrap items-center gap-2 text-sm">
-                                                                    <span className="font-semibold">{ex.name}</span>
-                                                                    <span className="text-base-content/30">-</span>
+                                                                <div key={j} className="grid grid-cols-12 gap-2 text-sm items-center">
+                                                                    <div className="col-span-5 font-semibold truncate" title={ex.name}>{ex.name}</div>
                                                                     {isCardio ? (
-                                                                        <div className="flex gap-2 text-base-content/80">
-                                                                            {ex.distance && <span>{ex.distance} km</span>}
-                                                                            {ex.duration && <span>{ex.duration} dk</span>}
-                                                                            {ex.speed && <span>{ex.speed} km/s</span>}
-                                                                        </div>
+                                                                        <>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.distance ? `${ex.distance} km` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.duration ? `${ex.duration} dk` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.speed ? `${ex.speed} km/s` : '-'}</div>
+                                                                        </>
                                                                     ) : (
-                                                                        <div className="flex gap-2 text-base-content/80">
-                                                                            {ex.sets && <span>{ex.sets} set</span>}
-                                                                            {ex.reps && <span>{ex.reps} tekrar</span>}
-                                                                            {ex.weight && <span>{ex.weight} kg</span>}
-                                                                        </div>
+                                                                        <>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.sets ? `${ex.sets} set` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.weight ? `${ex.weight} kg` : '-'}</div>
+                                                                        </>
                                                                     )}
                                                                 </div>
                                                             ))}
