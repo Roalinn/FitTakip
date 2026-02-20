@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import localforage from 'localforage';
 
 const StoreContext = createContext();
 
@@ -34,18 +35,7 @@ const defaultState = {
     journal: [],
 };
 
-function loadState() {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            const parsed = JSON.parse(raw);
-            return { ...defaultState, ...parsed, settings: { ...defaultState.settings, ...(parsed.settings || {}) } };
-        }
-    } catch (e) {
-        console.error('State load error:', e);
-    }
-    return defaultState;
-}
+// Removed synchronous loadState, we will do it asynchronously inside the Provider
 
 function reducer(state, action) {
     switch (action.type) {
@@ -258,16 +248,64 @@ function reducer(state, action) {
 }
 
 export function StoreProvider({ children }) {
-    const [state, dispatch] = useReducer(reducer, null, loadState);
+    const [state, dispatch] = useReducer(reducer, defaultState);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }, [state]);
+        async function fetchInitialData() {
+            try {
+                // 1. Try to fetch from IndexedDB
+                let data = await localforage.getItem(STORAGE_KEY);
 
-    // Apply theme to <html>
+                // 2. Fallback: Migration from localStorage to IndexedDB
+                if (!data) {
+                    const legacy = localStorage.getItem(STORAGE_KEY);
+                    if (legacy) {
+                        data = JSON.parse(legacy);
+                        await localforage.setItem(STORAGE_KEY, data);
+                    }
+                }
+
+                if (data) {
+                    dispatch({ type: 'IMPORT_DATA', payload: data });
+                }
+            } catch (error) {
+                console.error('State load error:', error);
+            } finally {
+                setIsLoaded(true);
+            }
+        }
+
+        // Configure localforage instance explicitly if needed, but defaults are fine
+        localforage.config({
+            name: 'FitTakip',
+            version: 1.0,
+            storeName: 'fittakip_store',
+            description: 'Local database for FitTakip'
+        });
+
+        fetchInitialData();
+    }, []);
+
+    // Save state to IndexedDB instead of localStorage
     useEffect(() => {
+        if (!isLoaded) return;
+
+        localforage.setItem(STORAGE_KEY, state).catch(e => {
+            console.error('IndexedDB save error:', e);
+        });
+
+        // Apply theme
         document.documentElement.setAttribute('data-theme', state.settings.theme);
-    }, [state.settings.theme]);
+    }, [state, isLoaded]);
+
+    if (!isLoaded) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-base-100 z-50">
+                <span className="loading loading-spinner text-primary loading-lg"></span>
+            </div>
+        );
+    }
 
     return (
         <StoreContext.Provider value={{ state, dispatch }}>

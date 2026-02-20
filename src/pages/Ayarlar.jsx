@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import localforage from 'localforage';
 
 const LANGUAGES = [
     { key: 'en', label: 'English' },
@@ -31,6 +32,8 @@ export default function Ayarlar() {
 
 
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const setLanguage = (language) => {
         dispatch({ type: 'SET_SETTINGS', payload: { language } });
     };
@@ -40,33 +43,49 @@ export default function Ayarlar() {
         setShowReset(false);
     };
 
-    const handleExport = () => {
-        const data = JSON.stringify(state, null, 2);
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `fittakip_backup_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+    const handleExport = async () => {
+        setIsLoading(true);
+        try {
+            // Get data directly from IndexedDB for most robust export
+            const dbData = await localforage.getItem('fittakip_data') || state;
+            const dataString = JSON.stringify(dbData, null, 2);
+            const blob = new Blob([dataString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `fittakip_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Export error:', error);
+            alert(t('settings_export_error', 'Dışa aktarma hatası!'));
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleImport = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        setIsLoading(true);
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
             try {
                 const parsed = JSON.parse(event.target.result);
                 dispatch({ type: 'IMPORT_DATA', payload: parsed });
+                // We also wait a tick for the state to settle
+                await new Promise(r => setTimeout(r, 100));
+
                 e.target.value = null;
                 alert(t('settings_import_success'));
             } catch (error) {
                 console.error('Import error:', error);
                 alert(t('settings_import_error'));
+            } finally {
+                setIsLoading(false);
             }
         };
         reader.readAsText(file);
@@ -232,6 +251,13 @@ export default function Ayarlar() {
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setShowReset(false)} />
+                </div>
+            )}
+
+            {/* Global Loading Overlay for Export/Import */}
+            {isLoading && (
+                <div className="fixed inset-0 bg-base-100/50 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <span className="loading loading-spinner text-primary loading-lg"></span>
                 </div>
             )}
         </div>
