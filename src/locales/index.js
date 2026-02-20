@@ -205,6 +205,9 @@ const tr = {
     exercise_estimated_1rm: 'Tahmini 1RM',
     exercise_total_volume: 'Toplam Hacim',
     exercise_best_set: 'En İyi Set',
+    exercise_max_duration: 'Maks. Süre',
+    exercise_total_duration: 'Toplam Süre',
+    exercise_session_count: 'Seans',
 
     // Theme
     settings_theme_desc: 'Uygulama temasını seçin',
@@ -428,6 +431,9 @@ const en = {
     exercise_estimated_1rm: 'Estimated 1RM',
     exercise_total_volume: 'Total Volume',
     exercise_best_set: 'Best Set',
+    exercise_max_duration: 'Max Duration',
+    exercise_total_duration: 'Total Duration',
+    exercise_session_count: 'Sessions',
 
     // Theme
     settings_theme_desc: 'Choose application theme',

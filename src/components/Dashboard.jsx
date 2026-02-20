@@ -20,7 +20,7 @@ export default function Dashboard() {
             className="card bg-base-200 rounded-xl"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
+            transition={{ delay: 0.5 }}
         >
             <div className="card-body p-4">
                 <h3 className="font-semibold text-sm mb-3">{t('dash_today_program')}</h3>
@@ -37,7 +37,9 @@ export default function Dashboard() {
                                             <span className="text-sm font-medium truncate">{meal.name || '—'}</span>
                                         </div>
                                         {meal.foods && (
-                                            <p className="text-xs text-base-content/40 mt-0.5 ml-[3.5rem] truncate">{meal.foods}</p>
+                                            <p className="text-xs text-base-content/40 mt-0.5 ml-[3.5rem] truncate">
+                                                {meal.foods.split(',').map(f => f.trim()).filter(Boolean).join(', ')}
+                                            </p>
                                         )}
                                     </div>
                                 ))}

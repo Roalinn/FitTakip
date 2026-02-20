@@ -373,7 +373,7 @@ export default function GymTakip() {
                                             </button>
                                         </div>
                                         {form.exercises.map((ex, i) => (
-                                            <div key={i} className="grid grid-cols-6 gap-2 items-end">
+                                            <div key={i} className="grid grid-cols-7 gap-2 items-end">
                                                 <div className="col-span-2">
                                                     {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_move', 'Hareket')}</span></label>}
                                                     <input
@@ -411,7 +411,17 @@ export default function GymTakip() {
                                                         className="input input-bordered input-sm rounded-xl w-full"
                                                         value={ex.weight}
                                                         onChange={(e) => updateExercise(i, 'weight', e.target.value)}
-                                                        placeholder="20 kg"
+                                                        placeholder="kg"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_duration', 'Süre')}</span></label>}
+                                                    <input
+                                                        type="number"
+                                                        className="input input-bordered input-sm rounded-xl w-full"
+                                                        value={ex.duration}
+                                                        onChange={(e) => updateExercise(i, 'duration', e.target.value)}
+                                                        placeholder="dk"
                                                     />
                                                 </div>
                                                 <div className="flex items-end">

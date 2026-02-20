@@ -27,25 +27,29 @@ export default function ExerciseProgress() {
         setSelectedExercise(exerciseNames[0]);
     }
 
-    // Build progress data for selected exercise
+    // Determine if this exercise is duration-based or weight-based
     const progressData = useMemo(() => {
         if (!selectedExercise) return [];
 
         const entries = [];
-        // Sort gymLog by date ascending
         const sorted = [...state.gymLog].sort((a, b) => new Date(a.date) - new Date(b.date));
 
         sorted.forEach(log => {
             log.exercises.forEach(ex => {
-                if (ex.name.trim() === selectedExercise && ex.weight) {
+                if (ex.name.trim() === selectedExercise) {
                     const weightNum = parseFloat(ex.weight);
-                    if (!isNaN(weightNum) && weightNum > 0) {
+                    const durationNum = parseFloat(ex.duration);
+                    const hasWeight = !isNaN(weightNum) && weightNum > 0;
+                    const hasDuration = !isNaN(durationNum) && durationNum > 0;
+
+                    if (hasWeight || hasDuration) {
                         entries.push({
                             date: log.date,
-                            weight: weightNum,
-                            sets: ex.sets || 0,
-                            reps: ex.reps || 0,
-                            volume: weightNum * (ex.sets || 1) * (ex.reps || 1),
+                            weight: hasWeight ? weightNum : 0,
+                            duration: hasDuration ? durationNum : 0,
+                            sets: parseInt(ex.sets) || 0,
+                            reps: parseInt(ex.reps) || 0,
+                            volume: hasWeight ? weightNum * (parseInt(ex.sets) || 1) * (parseInt(ex.reps) || 1) : 0,
                         });
                     }
                 }
@@ -55,35 +59,54 @@ export default function ExerciseProgress() {
         return entries;
     }, [state.gymLog, selectedExercise]);
 
+    // Determine tracking mode: weight-based or duration-based
+    const isDurationBased = useMemo(() => {
+        if (progressData.length === 0) return false;
+        const hasAnyWeight = progressData.some(d => d.weight > 0);
+        const hasAnyDuration = progressData.some(d => d.duration > 0);
+        return !hasAnyWeight && hasAnyDuration;
+    }, [progressData]);
+
     // Stats
     const stats = useMemo(() => {
         if (progressData.length === 0) return null;
+
+        if (isDurationBased) {
+            const maxDuration = Math.max(...progressData.map(d => d.duration));
+            const totalDuration = progressData.reduce((sum, d) => sum + d.duration, 0);
+            return {
+                mode: 'duration',
+                maxDuration,
+                totalDuration: totalDuration.toFixed(0),
+                sessionCount: progressData.length,
+            };
+        }
 
         const maxWeight = Math.max(...progressData.map(d => d.weight));
         const bestEntry = progressData.find(d => d.weight === maxWeight);
         const totalVolume = progressData.reduce((sum, d) => sum + d.volume, 0);
 
-        // Estimated 1RM using Epley formula: weight × (1 + reps / 30)
         let estimated1RM = maxWeight;
         if (bestEntry && bestEntry.reps > 1) {
             estimated1RM = maxWeight * (1 + bestEntry.reps / 30);
         }
 
         return {
+            mode: 'weight',
             maxWeight,
             estimated1RM: estimated1RM.toFixed(1),
             totalVolume: totalVolume.toFixed(0),
             bestSet: bestEntry ? `${bestEntry.weight}kg × ${bestEntry.sets}×${bestEntry.reps}` : '—',
         };
-    }, [progressData]);
+    }, [progressData, isDurationBased]);
 
     const chartData = progressData.map(d => ({
         date: new Date(d.date).toLocaleDateString(),
-        weight: d.weight,
+        value: isDurationBased ? d.duration : d.weight,
     }));
 
     if (exerciseNames.length === 0) {
-        return null; // Don't show section if no exercises logged
+        return null;
     }
 
     return (
@@ -112,7 +135,7 @@ export default function ExerciseProgress() {
             {progressData.length > 0 ? (
                 <>
                     {/* Stats */}
-                    {stats && (
+                    {stats && stats.mode === 'weight' && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                                 <div className="card-body p-3 text-center">
@@ -141,6 +164,29 @@ export default function ExerciseProgress() {
                         </div>
                     )}
 
+                    {stats && stats.mode === 'duration' && (
+                        <div className="grid grid-cols-3 gap-3">
+                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                                <div className="card-body p-3 text-center">
+                                    <p className="text-xs text-base-content/50">{t('exercise_max_duration', 'Maks. Süre')}</p>
+                                    <p className="text-xl font-bold text-primary">{stats.maxDuration} dk</p>
+                                </div>
+                            </motion.div>
+                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+                                <div className="card-body p-3 text-center">
+                                    <p className="text-xs text-base-content/50">{t('exercise_total_duration', 'Toplam Süre')}</p>
+                                    <p className="text-xl font-bold text-secondary">{stats.totalDuration} dk</p>
+                                </div>
+                            </motion.div>
+                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                                <div className="card-body p-3 text-center">
+                                    <p className="text-xs text-base-content/50">{t('exercise_session_count', 'Seans')}</p>
+                                    <p className="text-xl font-bold text-accent">{stats.sessionCount}</p>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+
                     {/* Chart */}
                     {chartData.length >= 2 && (
                         <motion.div
@@ -163,7 +209,7 @@ export default function ExerciseProgress() {
                                                 domain={['dataMin - 5', 'dataMax + 5']}
                                                 tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
                                                 axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                                unit=" kg"
+                                                unit={isDurationBased ? ' dk' : ' kg'}
                                             />
                                             <Tooltip
                                                 contentStyle={{
@@ -172,10 +218,11 @@ export default function ExerciseProgress() {
                                                     borderRadius: '12px',
                                                     color: '#fff',
                                                 }}
+                                                formatter={(value) => [`${value} ${isDurationBased ? 'dk' : 'kg'}`, isDurationBased ? 'Süre' : 'Ağırlık']}
                                             />
                                             <Line
                                                 type="monotone"
-                                                dataKey="weight"
+                                                dataKey="value"
                                                 stroke="oklch(0.65 0.24 265)"
                                                 strokeWidth={2.5}
                                                 dot={{ r: 4, fill: 'oklch(0.65 0.24 265)' }}
@@ -187,6 +234,38 @@ export default function ExerciseProgress() {
                             </div>
                         </motion.div>
                     )}
+
+                    {/* Records List */}
+                    <motion.div
+                        className="card bg-base-200 rounded-xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.25 }}
+                    >
+                        <div className="card-body p-4">
+                            <h4 className="font-semibold text-sm mb-3">{t('kilo_records', 'Kayıtlar')}</h4>
+                            <div className="space-y-2">
+                                {[...progressData].reverse().map((entry, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-base-300/40 rounded-lg px-3 py-2">
+                                        <span className="text-sm text-base-content/60">
+                                            {new Date(entry.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </span>
+                                        <div className="flex items-center gap-3">
+                                            {entry.weight > 0 && (
+                                                <span className="text-sm font-bold text-primary">{entry.weight} kg</span>
+                                            )}
+                                            {entry.sets > 0 && entry.reps > 0 && (
+                                                <span className="text-xs text-base-content/50 font-mono">{entry.sets}×{entry.reps}</span>
+                                            )}
+                                            {entry.duration > 0 && (
+                                                <span className="text-sm font-bold text-info">{entry.duration} dk</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
                 </>
             ) : (
                 <div className="card bg-base-200 rounded-xl">
