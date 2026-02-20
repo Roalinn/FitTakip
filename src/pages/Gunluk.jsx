@@ -199,7 +199,10 @@ export default function Gunluk() {
                             const logEntry = logMap[dateKey];
                             const hasLog = !!logEntry;
                             const isSelected = selectedDate === d;
-                            const isToday = makeDateKey(d) === makeDateKey(new Date().getDate()); // rough today check logic (works mostly)
+
+                            const todayObj = new Date();
+                            const todayDateKey = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+                            const isToday = dateKey === todayDateKey;
 
                             const moodObj = hasLog ? getMood(logEntry.mood) : null;
 
