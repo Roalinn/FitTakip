@@ -43,20 +43,16 @@ export default function App() {
             if (e.state && (e.state.isRoot || e.state.isModal)) return;
 
             // Otherwise, we are trying to exit the app (state is null or something else)
-            if (exitToastRef.current) {
-                // Second press: let the browser exit natively
-                return;
-            }
-
-            // First press: prevent exit, show toast, and push the state back
+            // First press: prevent exit, show toast, and wait. Do NOT push state yet.
             exitToastRef.current = true;
             setExitToast(true);
-            window.history.pushState({ isRoot: true }, '');
 
             if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
             exitTimerRef.current = setTimeout(() => {
                 exitToastRef.current = false;
                 setExitToast(false);
+                // User didn't exit, protect against next back press
+                window.history.pushState({ isRoot: true }, '');
             }, 2000);
         };
 
@@ -159,9 +155,9 @@ export default function App() {
             </main>
             {/* Double Back Exit Toast */}
             {exitToast && (
-                <div className="toast toast-end toast-bottom z-50 mb-8 sm:mb-0">
-                    <div className="alert alert-info py-2 px-4 shadow-xl border-0 bg-neutral text-neutral-content rounded-xl">
-                        <span>Çıkmak için tekrar dokunun</span>
+                <div className="toast toast-center toast-bottom z-50 mb-8 sm:mb-0 w-max">
+                    <div className="alert py-2 px-6 shadow-xl border border-white/10 bg-base-300 text-base-content rounded-full text-sm font-medium">
+                        <span>{t('toast_double_back', 'Çıkmak için tekrar dokunun')}</span>
                     </div>
                 </div>
             )}

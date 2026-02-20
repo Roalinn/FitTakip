@@ -458,58 +458,57 @@ export default function GymTakip() {
                                             </button>
                                         </div>
                                         {form.exercises.map((ex, i) => (
-                                            <div key={i} className={`flex gap-2 items-end`}>
-                                                <div className="flex-1">
-                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_move', 'Hareket')}</span></label>}
+                                            <div key={i} className={`p-4 bg-base-100 rounded-xl border border-base-300 relative space-y-3`}>
+                                                {form.exercises.length > 1 && (
+                                                    <button
+                                                        className="btn btn-ghost btn-sm btn-circle absolute top-2 right-2 text-error"
+                                                        onClick={() => removeExerciseRow(i)}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                )}
+                                                <div className="form-control">
+                                                    <label className="label pt-0"><span className="label-text">{t('gym_move_name', 'Hareket Adı')}</span></label>
                                                     <input
                                                         type="text"
-                                                        className="input input-bordered input-sm rounded-xl w-full"
+                                                        className="input input-bordered rounded-xl w-full pr-10"
                                                         value={ex.name}
                                                         onChange={(e) => updateExercise(i, 'name', e.target.value)}
-                                                        placeholder={form.logType === 'cardio' ? t('gym_name_cardio', 'Koşu, Yüzme...') : t('gym_name', 'Adı')}
+                                                        placeholder={form.logType === 'cardio' ? t('gym_name_cardio', 'Koşu, Yüzme...') : "Bench Press, Squat..."}
                                                     />
                                                 </div>
+
                                                 {form.logType === 'cardio' ? (
-                                                    <>
-                                                        <div className="w-12 sm:w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_dist', 'Msf')}</span></label>}
-                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.distance || ''} onChange={(e) => updateExercise(i, 'distance', e.target.value)} placeholder="km" />
+                                                    <div className="grid grid-cols-3 gap-3">
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_dist', 'Mesafe')}</span></label>
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered rounded-xl w-full" value={ex.distance || ''} onChange={(e) => updateExercise(i, 'distance', e.target.value)} placeholder="km" />
                                                         </div>
-                                                        <div className="w-12 sm:w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_dur', 'Süre')}</span></label>}
-                                                            <input type="number" step="1" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.duration || ''} onChange={(e) => updateExercise(i, 'duration', e.target.value)} placeholder="dk" />
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_duration_min', 'Süre')}</span></label>
+                                                            <input type="number" step="1" inputMode="numeric" className="input input-bordered rounded-xl w-full" value={ex.duration || ''} onChange={(e) => updateExercise(i, 'duration', e.target.value)} placeholder="dk" />
                                                         </div>
-                                                        <div className="w-14 sm:w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_spd', 'Hız')}</span></label>}
-                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.speed || ''} onChange={(e) => updateExercise(i, 'speed', e.target.value)} placeholder="km/s" />
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_spd', 'Ort Hız')}</span></label>
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered rounded-xl w-full" value={ex.speed || ''} onChange={(e) => updateExercise(i, 'speed', e.target.value)} placeholder="km/s" />
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 ) : (
-                                                    <>
-                                                        <div className="w-12 sm:w-14">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_sets', 'Set')}</span></label>}
-                                                            <input type="number" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.sets || ''} onChange={(e) => updateExercise(i, 'sets', e.target.value)} placeholder="4" />
+                                                    <div className="grid grid-cols-3 gap-3">
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_sets', 'Set')}</span></label>
+                                                            <input type="number" inputMode="numeric" className="input input-bordered rounded-xl w-full" value={ex.sets || ''} onChange={(e) => updateExercise(i, 'sets', e.target.value)} placeholder="4" />
                                                         </div>
-                                                        <div className="w-12 sm:w-14">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_reps', 'Tkr')}</span></label>}
-                                                            <input type="number" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.reps || ''} onChange={(e) => updateExercise(i, 'reps', e.target.value)} placeholder="12" />
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_reps', 'Tekrar')}</span></label>
+                                                            <input type="number" inputMode="numeric" className="input input-bordered rounded-xl w-full" value={ex.reps || ''} onChange={(e) => updateExercise(i, 'reps', e.target.value)} placeholder="12" />
                                                         </div>
-                                                        <div className="w-14 sm:w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_weight', 'Ağr')}</span></label>}
-                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.weight || ''} onChange={(e) => updateExercise(i, 'weight', e.target.value)} placeholder="kg" />
+                                                        <div className="form-control">
+                                                            <label className="label"><span className="label-text">{t('gym_weight', 'Ağırlık')}</span></label>
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered rounded-xl w-full" value={ex.weight || ''} onChange={(e) => updateExercise(i, 'weight', e.target.value)} placeholder="kg" />
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 )}
-                                                <div className="w-8 flex justify-center pb-1">
-                                                    {form.exercises.length > 1 && (
-                                                        <button
-                                                            className="btn btn-ghost btn-sm btn-square text-error min-h-0 h-8"
-                                                            onClick={() => removeExerciseRow(i)}
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    )}
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
