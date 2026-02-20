@@ -242,10 +242,10 @@ export default function GymTakip() {
                 {subTab === 'takip' && (
                     <div className="flex gap-2">
                         <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
-                            {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
+                            + {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
                         </button>
                         <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
-                            {t('gym_btn_add_ext', 'Antrenman Ekle')}
+                            + {t('gym_btn_add_ext', 'Antrenman Ekle')}
                         </button>
                     </div>
                 )}
@@ -366,8 +366,8 @@ export default function GymTakip() {
                                                                         </>
                                                                     ) : (
                                                                         <>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.sets ? `${ex.sets} set` : '-'}</div>
-                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.sets ? `${ex.sets} set` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
                                                                             <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.weight ? `${ex.weight} kg` : '-'}</div>
                                                                         </>
                                                                     )}

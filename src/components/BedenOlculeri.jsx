@@ -127,12 +127,6 @@ export default function BedenOlculeri() {
                             </div>
                             {/* Measurement filter buttons */}
                             <div className="flex flex-wrap justify-end gap-1">
-                                <button
-                                    className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                    onClick={() => setMeasureFilter('all')}
-                                >
-                                    {t('filter_all')}
-                                </button>
                                 {MEASUREMENTS.map((m) => (
                                     <button
                                         key={m.key}
@@ -142,6 +136,12 @@ export default function BedenOlculeri() {
                                         {m.label}
                                     </button>
                                 ))}
+                                <button
+                                    className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                    onClick={() => setMeasureFilter('all')}
+                                >
+                                    {t('filter_all')}
+                                </button>
                             </div>
                         </div>
                     </div>
