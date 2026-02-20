@@ -197,7 +197,7 @@ const tr = {
     dash_workouts: 'antrenman',
 
     // Exercise Progress / 1RM
-    exercise_progress_title: 'Egzersiz Gelişimi',
+    exercise_progress_title: 'Gym Gelişim',
     exercise_progress_desc: 'Hareketlerinizin ağırlık gelişimini takip edin',
     exercise_select: 'Hareket Seç',
     exercise_no_data: 'Bu hareket için henüz kayıt yok.',
@@ -420,7 +420,7 @@ const en = {
     dash_workouts: 'workouts',
 
     // Exercise Progress / 1RM
-    exercise_progress_title: 'Exercise Progress',
+    exercise_progress_title: 'Gym Progress',
     exercise_progress_desc: 'Track weight progress for your exercises',
     exercise_select: 'Select Exercise',
     exercise_no_data: 'No records yet for this exercise.',

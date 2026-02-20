@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import ExerciseProgress from './ExerciseProgress';
 
 export default function GymTakip() {
     const { state, dispatch } = useStore();
@@ -434,6 +435,9 @@ export default function GymTakip() {
                     <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />
                 </div>
             )}
+
+            {/* Gym Gelişim Section */}
+            <ExerciseProgress />
         </div>
     );
 }

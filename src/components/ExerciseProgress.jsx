@@ -90,7 +90,7 @@ export default function ExerciseProgress() {
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-semibold">{t('exercise_progress_title')}</h3>
+                    <h3 className="text-lg font-semibold">{t('exercise_progress_title', 'Gym Gelişim')}</h3>
                     <p className="text-xs text-base-content/40 mt-0.5">{t('exercise_progress_desc')}</p>
                 </div>
             </div>

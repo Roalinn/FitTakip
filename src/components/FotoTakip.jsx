@@ -12,10 +12,6 @@ export default function FotoTakip() {
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const fileRef = useRef(null);
-    const canvasRef = useRef(null);
-    const [compareMode, setCompareMode] = useState(false);
-    const [beforePhoto, setBeforePhoto] = useState(null);
-    const [afterPhoto, setAfterPhoto] = useState(null);
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
@@ -75,121 +71,10 @@ export default function FotoTakip() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">{t('foto_title', 'Fotoğraflar')}</h3>
-                <div className="flex items-center gap-2">
-                    {state.photos.length >= 2 && (
-                        <button
-                            className={`btn btn-sm rounded-xl ${compareMode ? 'btn-secondary' : 'btn-ghost bg-base-200'}`}
-                            onClick={() => { setCompareMode(!compareMode); setBeforePhoto(null); setAfterPhoto(null); }}
-                        >
-                            {t('foto_compare', 'Kıyasla')}
-                        </button>
-                    )}
-                    <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowModal(true)}>
-                        {t('foto_btn_add', '+ Fotoğraf Ekle')}
-                    </button>
-                </div>
+                <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowModal(true)}>
+                    {t('foto_btn_add', '+ Fotoğraf Ekle')}
+                </button>
             </div>
-
-            {/* Compare Mode */}
-            {compareMode && (
-                <motion.div
-                    className="card bg-base-200 rounded-xl"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="card-body p-4">
-                        <h4 className="font-semibold text-sm mb-3">{t('foto_compare_title', 'Öncesi & Sonrası')}</h4>
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Before */}
-                            <div>
-                                <p className="text-xs text-base-content/50 mb-2 text-center">{t('foto_select_before', 'Önceki')}</p>
-                                {beforePhoto ? (
-                                    <div className="relative cursor-pointer" onClick={() => setBeforePhoto(null)}>
-                                        <img src={beforePhoto.src} alt="Before" className="w-full aspect-square object-cover rounded-xl" />
-                                        <p className="text-xs text-center mt-1 text-base-content/50">{new Date(beforePhoto.date).toLocaleDateString()}</p>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-3 gap-1 max-h-48 overflow-y-auto">
-                                        {state.photos.map((p, i) => (
-                                            <img
-                                                key={i}
-                                                src={p.src}
-                                                alt=""
-                                                className="aspect-square object-cover rounded-lg cursor-pointer hover:ring-2 ring-primary transition-all"
-                                                onClick={() => setBeforePhoto(p)}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            {/* After */}
-                            <div>
-                                <p className="text-xs text-base-content/50 mb-2 text-center">{t('foto_select_after', 'Sonraki')}</p>
-                                {afterPhoto ? (
-                                    <div className="relative cursor-pointer" onClick={() => setAfterPhoto(null)}>
-                                        <img src={afterPhoto.src} alt="After" className="w-full aspect-square object-cover rounded-xl" />
-                                        <p className="text-xs text-center mt-1 text-base-content/50">{new Date(afterPhoto.date).toLocaleDateString()}</p>
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-3 gap-1 max-h-48 overflow-y-auto">
-                                        {state.photos.map((p, i) => (
-                                            <img
-                                                key={i}
-                                                src={p.src}
-                                                alt=""
-                                                className="aspect-square object-cover rounded-lg cursor-pointer hover:ring-2 ring-secondary transition-all"
-                                                onClick={() => setAfterPhoto(p)}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        {beforePhoto && afterPhoto && (
-                            <button
-                                className="btn btn-primary btn-sm rounded-xl mt-3 w-full"
-                                onClick={() => {
-                                    const canvas = canvasRef.current;
-                                    if (!canvas) return;
-                                    const ctx = canvas.getContext('2d');
-                                    const size = 600;
-                                    canvas.width = size * 2 + 40;
-                                    canvas.height = size + 80;
-                                    ctx.fillStyle = '#1a1a2e';
-                                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                                    const imgBefore = new Image();
-                                    imgBefore.onload = () => {
-                                        ctx.drawImage(imgBefore, 10, 50, size, size);
-                                        ctx.fillStyle = '#fff';
-                                        ctx.font = 'bold 14px Inter, sans-serif';
-                                        ctx.textAlign = 'center';
-                                        ctx.fillText(new Date(beforePhoto.date).toLocaleDateString(), size / 2 + 10, size + 75);
-
-                                        const imgAfter = new Image();
-                                        imgAfter.onload = () => {
-                                            ctx.drawImage(imgAfter, size + 30, 50, size, size);
-                                            ctx.fillText(new Date(afterPhoto.date).toLocaleDateString(), size + 30 + size / 2, size + 75);
-                                            ctx.font = 'bold 24px Inter, sans-serif';
-                                            ctx.fillText('FitTakip - Before & After', canvas.width / 2, 35);
-
-                                            const link = document.createElement('a');
-                                            link.download = 'fittakip_before_after.png';
-                                            link.href = canvas.toDataURL('image/png');
-                                            link.click();
-                                        };
-                                        imgAfter.src = afterPhoto.src;
-                                    };
-                                    imgBefore.src = beforePhoto.src;
-                                }}
-                            >
-                                {t('foto_download', 'Kolajı İndir')}
-                            </button>
-                        )}
-                        <canvas ref={canvasRef} style={{ display: 'none' }} />
-                    </div>
-                </motion.div>
-            )}
 
             {/* Photo grid by month */}
             {months.length > 0 ? (
@@ -221,6 +106,18 @@ export default function FotoTakip() {
                                                     <p className="text-xs text-white/60 truncate mt-0.5">{photo.note}</p>
                                                 )}
                                             </div>
+                                            <button
+                                                className="absolute top-2 right-10 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    const link = document.createElement('a');
+                                                    link.download = `fittakip_${photo.date || 'photo'}.jpg`;
+                                                    link.href = photo.src;
+                                                    link.click();
+                                                }}
+                                            >
+                                                ⬇
+                                            </button>
                                             <button
                                                 className="absolute top-2 right-2 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                                                 onClick={(e) => {

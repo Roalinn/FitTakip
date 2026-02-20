@@ -338,7 +338,9 @@ export default function AnaHedef() {
             )}
 
             {/* Dashboard Section */}
-            <Dashboard />
+            <div className="mt-6">
+                <Dashboard />
+            </div>
         </div>
     );
 }
