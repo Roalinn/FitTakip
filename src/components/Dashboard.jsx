@@ -31,9 +31,14 @@ export default function Dashboard() {
                             <p className="text-xs text-base-content/40 uppercase tracking-wider mb-2">🍎 {t('prog_diyet', 'Diyet')}</p>
                             <div className="space-y-1.5">
                                 {todayDiet.map((meal, i) => (
-                                    <div key={i} className="flex items-center gap-2 bg-base-300/40 rounded-lg px-3 py-1.5">
-                                        <span className="text-xs text-primary font-mono font-medium min-w-[3rem]">{meal.time || '—'}</span>
-                                        <span className="text-sm truncate">{meal.name || '—'}</span>
+                                    <div key={i} className="bg-base-300/40 rounded-lg px-3 py-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-primary font-mono font-medium min-w-[3rem]">{meal.time || '—'}</span>
+                                            <span className="text-sm font-medium truncate">{meal.name || '—'}</span>
+                                        </div>
+                                        {meal.foods && (
+                                            <p className="text-xs text-base-content/40 mt-0.5 ml-[3.5rem] truncate">{meal.foods}</p>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -48,8 +53,11 @@ export default function Dashboard() {
                                 {todayGym.map((ex, i) => (
                                     <div key={i} className="flex items-center justify-between bg-base-300/40 rounded-lg px-3 py-1.5">
                                         <span className="text-sm truncate">{ex.name || '—'}</span>
-                                        <span className="text-xs text-base-content/50 font-mono">
-                                            {ex.sets ? `${ex.sets}×${ex.reps || '?'}` : ''}
+                                        <span className="text-xs text-base-content/50 font-mono whitespace-nowrap ml-2">
+                                            {[
+                                                ex.sets && ex.reps ? `${ex.sets}×${ex.reps}` : '',
+                                                ex.duration ? `${ex.duration}dk` : '',
+                                            ].filter(Boolean).join(' · ') || '—'}
                                         </span>
                                     </div>
                                 ))}

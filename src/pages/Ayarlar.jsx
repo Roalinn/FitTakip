@@ -9,18 +9,18 @@ const LANGUAGES = [
 ];
 
 const THEMES = [
-    { key: 'dark', label: 'Dark', color: '#1d232a' },
     { key: 'light', label: 'Light', color: '#ffffff' },
-    { key: 'synthwave', label: 'Synthwave', color: '#1a103c' },
+    { key: 'nord', label: 'Nord', color: '#eceff4' },
     { key: 'retro', label: 'Retro', color: '#e4d8b4' },
     { key: 'cyberpunk', label: 'Cyberpunk', color: '#ffe119' },
     { key: 'valentine', label: 'Valentine', color: '#e27181' },
     { key: 'aqua', label: 'Aqua', color: '#345da7' },
-    { key: 'dracula', label: 'Dracula', color: '#282a36' },
-    { key: 'coffee', label: 'Coffee', color: '#20161f' },
     { key: 'dim', label: 'Dim', color: '#2a303c' },
-    { key: 'nord', label: 'Nord', color: '#eceff4' },
-    { key: 'luxury', label: 'Luxury', color: '#09090b' }
+    { key: 'dracula', label: 'Dracula', color: '#282a36' },
+    { key: 'dark', label: 'Dark', color: '#1d232a' },
+    { key: 'synthwave', label: 'Synthwave', color: '#1a103c' },
+    { key: 'coffee', label: 'Coffee', color: '#20161f' },
+    { key: 'luxury', label: 'Luxury', color: '#09090b' },
 ];
 
 export default function Ayarlar() {

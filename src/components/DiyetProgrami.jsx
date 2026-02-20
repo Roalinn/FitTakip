@@ -7,7 +7,8 @@ import { generateDietPDF } from '../utils/pdfExport';
 export default function DiyetProgrami() {
     const { state, dispatch } = useStore();
     const { t } = useTranslation();
-    const [selectedDay, setSelectedDay] = useState('pazartesi');
+    const selectedDay = state.settings.activeProgramDay || 'pazartesi';
+    const setSelectedDay = (day) => dispatch({ type: 'SET_SETTINGS', payload: { activeProgramDay: day } });
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
