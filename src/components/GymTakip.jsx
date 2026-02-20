@@ -170,18 +170,21 @@ export default function GymTakip() {
                         <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={prevMonth}>
                             ◀
                         </button>
-                        <input
-                            type="month"
-                            className="input input-sm input-ghost rounded-xl font-semibold text-center text-lg h-10 px-2 cursor-pointer hover:bg-base-300 transition-colors"
-                            value={`${year}-${String(month + 1).padStart(2, '0')}`}
-                            onChange={(e) => {
-                                const [y, m] = e.target.value.split('-');
-                                if (y && m) {
-                                    setCurrentMonth({ year: parseInt(y), month: parseInt(m) - 1 });
-                                    setSelectedDate(null);
-                                }
-                            }}
-                        />
+                        <div className="relative flex items-center justify-center cursor-pointer hover:bg-base-300 rounded-xl px-4 py-1 transition-colors">
+                            <h3 className="font-semibold capitalize text-lg text-center">{monthLabel}</h3>
+                            <input
+                                type="month"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                value={`${year}-${String(month + 1).padStart(2, '0')}`}
+                                onChange={(e) => {
+                                    const [y, m] = e.target.value.split('-');
+                                    if (y && m) {
+                                        setCurrentMonth({ year: parseInt(y), month: parseInt(m) - 1 });
+                                        setSelectedDate(null);
+                                    }
+                                }}
+                            />
+                        </div>
                         <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={nextMonth}>
                             ▶
                         </button>
