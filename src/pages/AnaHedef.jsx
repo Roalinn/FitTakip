@@ -117,7 +117,7 @@ export default function AnaHedef() {
             const hasLogToday = weightLog.some(l => l.date === todayStr);
             if (!hasLogToday) {
                 dispatch({
-                    type: 'ADD_WEIGHT_LOG',
+                    type: 'ADD_WEIGHT',
                     payload: { date: todayStr, weight: payload.startWeight, photo: null }
                 });
             }
