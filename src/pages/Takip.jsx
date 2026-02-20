@@ -9,7 +9,7 @@ const tabs = [
     { key: 'kilo', label: 'Kilo' },
     { key: 'beden', label: 'Beden Ölçüleri' },
     { key: 'gym', label: 'Gym' },
-    { key: 'foto', label: 'Foto' },
+    { key: 'foto', label: 'Fotoğraflar' },
 ];
 
 export default function Takip() {

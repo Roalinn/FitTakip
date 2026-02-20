@@ -8,6 +8,7 @@ export default function FotoTakip() {
     const [form, setForm] = useState({ date: '', note: '' });
     const [preview, setPreview] = useState(null);
     const [selectedPhoto, setSelectedPhoto] = useState(null);
+    const [deleteIndex, setDeleteIndex] = useState(null);
     const fileRef = useRef(null);
 
     const handleFileChange = (e) => {
@@ -37,7 +38,14 @@ export default function FotoTakip() {
     };
 
     const handleDelete = (index) => {
-        dispatch({ type: 'DELETE_PHOTO', index });
+        setDeleteIndex(index);
+    };
+
+    const confirmDelete = () => {
+        if (deleteIndex !== null) {
+            dispatch({ type: 'DELETE_PHOTO', index: deleteIndex });
+            setDeleteIndex(null);
+        }
     };
 
     // Group by month
@@ -60,7 +68,7 @@ export default function FotoTakip() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Foto Takip</h3>
+                <h3 className="text-lg font-semibold">Fotoğraflar</h3>
                 <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowModal(true)}>
                     + Fotoğraf Ekle
                 </button>
@@ -200,6 +208,26 @@ export default function FotoTakip() {
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => { setShowModal(false); setPreview(null); }} />
+                </div>
+            )}
+
+            {/* Delete Confirmation */}
+            {deleteIndex !== null && (
+                <div className="modal modal-open">
+                    <motion.div
+                        className="modal-box rounded-2xl max-w-sm"
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.15 }}
+                    >
+                        <h3 className="font-bold text-lg mb-2">Silmeyi Onayla</h3>
+                        <p className="text-sm text-base-content/60">Bu fotoğrafı silmek istediğinize emin misiniz?</p>
+                        <div className="modal-action">
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setDeleteIndex(null)}>İptal</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={confirmDelete}>Sil</button>
+                        </div>
+                    </motion.div>
+                    <div className="modal-backdrop" onClick={() => setDeleteIndex(null)} />
                 </div>
             )}
         </div>
