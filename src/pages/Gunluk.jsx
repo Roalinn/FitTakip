@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 
 const MOOD_OPTIONS = [
     { emoji: '😄', label: 'Harika', value: 5 },
@@ -34,6 +35,9 @@ export default function Gunluk() {
         energy: 2,
         note: '',
     });
+
+    useHardwareBack(showModal, () => setShowModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
 
     const journal = state.journal || [];
 

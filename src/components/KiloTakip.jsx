@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -12,9 +13,14 @@ export default function KiloTakip() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [form, setForm] = useState({ date: new Date().toISOString().split('T')[0], weight: '' });
     const [chartFilter, setChartFilter] = useState('all');
+    const [showEditModal, setShowEditModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [editForm, setEditForm] = useState({ date: '', weight: '' });
     const [deleteIndex, setDeleteIndex] = useState(null);
+
+    useHardwareBack(showAddModal, () => setShowAddModal(false));
+    useHardwareBack(showEditModal, () => setShowEditModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
 
     const FILTERS = [
         { key: 'week', label: t('filter_week'), days: 7 },

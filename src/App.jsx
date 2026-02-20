@@ -6,6 +6,7 @@ import Programlar from './pages/Programlar';
 import Takip from './pages/Takip';
 import Gunluk from './pages/Gunluk';
 import Ayarlar from './pages/Ayarlar';
+import { useHardwareBack } from './hooks/useHardwareBack';
 const pages = {
     anaHedef: AnaHedef,
     programlar: Programlar,
@@ -25,10 +26,48 @@ export default function App() {
     const [activePage, setActivePage] = useState('anaHedef');
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    // Swipe to open/close sidebar
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+    const minSwipeDistance = 50;
+
+    // Hardware back closes sidebar too
+    useHardwareBack(sidebarOpen, () => setSidebarOpen(false));
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        // Allow opening sidebar by swiping right from the edge (x < 30)
+        if (isRightSwipe && touchStart < 30) {
+            setSidebarOpen(true);
+        }
+        // Allow close sidebar by swiping left
+        if (isLeftSwipe && sidebarOpen) {
+            setSidebarOpen(false);
+        }
+    };
+
     const PageComponent = pages[activePage];
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-base-100 via-base-200/50 to-base-300/80 text-base-content overflow-hidden">
+        <div
+            className="flex h-screen bg-gradient-to-br from-base-100 via-base-200/50 to-base-300/80 text-base-content overflow-hidden select-none sm:select-auto"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <motion.div

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 
 export default function FotoTakip() {
     const { state, dispatch } = useStore();
@@ -12,6 +13,10 @@ export default function FotoTakip() {
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const fileRef = useRef(null);
+
+    useHardwareBack(showModal, () => setShowModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
+    useHardwareBack(selectedPhoto !== null, () => setSelectedPhoto(null));
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
@@ -98,16 +103,16 @@ export default function FotoTakip() {
                                                 className="w-full aspect-square object-cover rounded-xl cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
                                                 onClick={() => setSelectedPhoto(photo)}
                                             />
-                                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent rounded-b-xl p-2">
-                                                <p className="text-xs text-white/80">
+                                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent rounded-b-xl p-2 pt-6">
+                                                <p className="text-[10px] sm:text-xs text-white/90 font-medium drop-shadow-sm">
                                                     {new Date(photo.date).toLocaleDateString('tr-TR')}
                                                 </p>
                                                 {photo.note && (
-                                                    <p className="text-xs text-white/60 truncate mt-0.5">{photo.note}</p>
+                                                    <p className="text-[10px] sm:text-xs text-white/70 truncate mt-0.5">{photo.note}</p>
                                                 )}
                                             </div>
                                             <button
-                                                className="absolute top-2 right-10 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="absolute top-2 right-10 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     const link = document.createElement('a');
@@ -119,7 +124,7 @@ export default function FotoTakip() {
                                                 ⬇
                                             </button>
                                             <button
-                                                className="absolute top-2 right-2 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="absolute top-2 right-2 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleDelete(globalIndex);
@@ -148,14 +153,20 @@ export default function FotoTakip() {
             {selectedPhoto && (
                 <div className="modal modal-open">
                     <motion.div
-                        className="modal-box rounded-2xl max-w-xl p-0 overflow-hidden"
+                        className="modal-box rounded-2xl max-w-xl p-0 overflow-hidden relative"
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.2 }}
                     >
+                        <button
+                            className="absolute top-3 right-3 btn btn-circle btn-sm bg-black/50 border-0 text-white z-10 hover:bg-black/70"
+                            onClick={() => setSelectedPhoto(null)}
+                        >
+                            ✕
+                        </button>
                         <img src={selectedPhoto.src} alt="" className="w-full" />
-                        <div className="p-4">
-                            <p className="text-sm text-base-content/50">
+                        <div className="p-4 bg-base-200">
+                            <p className="text-sm text-base-content/60 font-medium">
                                 {new Date(selectedPhoto.date).toLocaleDateString('tr-TR', {
                                     day: 'numeric', month: 'long', year: 'numeric',
                                 })}

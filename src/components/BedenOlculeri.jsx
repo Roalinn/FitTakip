@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -18,6 +19,9 @@ export default function BedenOlculeri() {
         date: new Date().toISOString().split('T')[0],
         chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '',
     });
+
+    useHardwareBack(showModal, () => setShowModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
 
     const MEASUREMENTS = [
         { key: 'chest', label: t('beden_chest', 'Göğüs'), color: 'oklch(0.65 0.24 265)' },

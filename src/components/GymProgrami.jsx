@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
 import { generateGymPDF } from '../utils/pdfExport';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 
 export default function GymProgrami() {
     const { state, dispatch } = useStore();
@@ -13,6 +14,9 @@ export default function GymProgrami() {
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [form, setForm] = useState({ type: 'weight', name: '', sets: '', reps: '', duration: '', distance: '', speed: '', note: '' });
+
+    useHardwareBack(showModal, () => setShowModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
 
     const DAYS_CONFIG = [
         { key: 'pazartesi', label: t('day_short_pzt', 'Pzt'), full: t('day_full_pzt', 'Pazartesi') },
@@ -80,6 +84,8 @@ export default function GymProgrami() {
         const copied = sessionStorage.getItem('fittakip_copied_gym');
         if (copied) {
             dispatch({ type: 'SET_GYM_PROGRAM', day: selectedDay, payload: JSON.parse(copied) });
+        } else {
+            alert(t('common_no_copied', 'Kopyalanmış program bulunamadı. Lütfen önce başka bir günü kopyalayın.'));
         }
     };
 
@@ -128,14 +134,12 @@ export default function GymProgrami() {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     </button>
-                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handleCopy} title="Programı Kopyala">
+                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handleCopy} title="Programı Kopyala">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                     </button>
-                    {sessionStorage.getItem('fittakip_copied_gym') && (
-                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handlePaste} title="Yapıştır">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                        </button>
-                    )}
+                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handlePaste} title="Yapıştır">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </button>
                     <button className="btn btn-secondary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('cardio')}>
                         + {t('gym_btn_cardio_add', 'Kardiyo')}
                     </button>

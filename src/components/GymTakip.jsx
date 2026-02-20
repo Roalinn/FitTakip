@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
 import ExerciseProgress from './ExerciseProgress';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 
 export default function GymTakip() {
     const { state, dispatch } = useStore();
@@ -23,6 +24,9 @@ export default function GymTakip() {
         logType: 'weight',
         exercises: [{ name: '', sets: '', reps: '', weight: '' }],
     });
+
+    useHardwareBack(showModal, () => setShowModal(false));
+    useHardwareBack(deleteIndex !== null, () => setDeleteIndex(null));
 
     // Build a map: dateString -> gymLog entries
     const logMap = useMemo(() => {
