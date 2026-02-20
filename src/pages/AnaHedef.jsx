@@ -59,6 +59,31 @@ export default function AnaHedef() {
     // Map BMI to a 0-100 scale for the radial progress (let's assume max BMI is 50 for gauge scale)
     const bmiPercentage = bmi ? Math.min(100, Math.max(0, ((bmi - 10) / 30) * 100)) : 0; // 10 BMI -> 0%, 40 BMI -> 100%
 
+    // Body Fat % Estimation (Deurenberg formula: BF% = 1.20 × BMI + 0.23 × Age − 10.8 × Sex − 5.4)
+    // Sex: 1 for male, 0 for female
+    const bodyFat = (bmi && goal.age) ? (
+        1.20 * bmi + 0.23 * goal.age - 10.8 * (goal.gender === 'erkek' ? 1 : 0) - 5.4
+    ) : null;
+
+    let bfCategory = '';
+    let bfColor = 'text-primary';
+    if (bodyFat !== null) {
+        if (goal.gender === 'erkek') {
+            if (bodyFat < 6) { bfCategory = t('bf_essential', 'Düşük'); bfColor = 'text-info'; }
+            else if (bodyFat < 14) { bfCategory = t('bf_athletic', 'Atletik'); bfColor = 'text-success'; }
+            else if (bodyFat < 18) { bfCategory = t('bf_fit', 'Fit'); bfColor = 'text-success'; }
+            else if (bodyFat < 25) { bfCategory = t('bf_avg', 'Ortalama'); bfColor = 'text-warning'; }
+            else { bfCategory = t('bf_high', 'Yüksek'); bfColor = 'text-error'; }
+        } else {
+            if (bodyFat < 14) { bfCategory = t('bf_essential', 'Düşük'); bfColor = 'text-info'; }
+            else if (bodyFat < 21) { bfCategory = t('bf_athletic', 'Atletik'); bfColor = 'text-success'; }
+            else if (bodyFat < 25) { bfCategory = t('bf_fit', 'Fit'); bfColor = 'text-success'; }
+            else if (bodyFat < 32) { bfCategory = t('bf_avg', 'Ortalama'); bfColor = 'text-warning'; }
+            else { bfCategory = t('bf_high', 'Yüksek'); bfColor = 'text-error'; }
+        }
+    }
+    const bfPercentage = bodyFat ? Math.min(100, Math.max(0, ((bodyFat) / 45) * 100)) : 0;
+
     const handleSave = () => {
         dispatch({
             type: 'SET_GOAL',
@@ -341,6 +366,32 @@ export default function AnaHedef() {
                                 </div>
                             </motion.div>
                         )}
+
+                        {/* Body Fat Estimation */}
+                        {bodyFat !== null && (
+                            <motion.div
+                                className="card bg-base-200 rounded-xl overflow-hidden relative"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                <div className="card-body p-5 flex flex-row items-center gap-6">
+                                    <div
+                                        className={`radial-progress ${bfColor}`}
+                                        style={{ "--value": bfPercentage, "--size": "5.5rem", "--thickness": "6px" }}
+                                    >
+                                        <span className="text-lg font-bold text-base-content">%{bodyFat.toFixed(1)}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium mb-1">{t('bf_title', 'Vücut Yağ Oranı')}</p>
+                                        <p className={`text-lg font-bold ${bfColor}`}>{bfCategory}</p>
+                                        <div className="mt-2 pt-2 border-t border-base-300">
+                                            <p className="text-xs text-base-content/50">{t('bf_note', 'Deurenberg formülüyle tahmini')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
 
                     {/* Weekly average info (moved to bottom) */}
@@ -356,16 +407,6 @@ export default function AnaHedef() {
                             </p>
                         </motion.div>
                     )}
-
-                    {/* Motivational Quote */}
-                    <motion.div
-                        className="rounded-xl bg-base-200 px-5 py-3 text-center"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.45 }}
-                    >
-                        <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
-                    </motion.div>
                 </div>
             ) : (
                 <motion.div
@@ -387,6 +428,18 @@ export default function AnaHedef() {
             <div className="mt-6">
                 <Dashboard />
             </div>
+
+            {/* Motivational Quote */}
+            <motion.div
+                className="card bg-base-200 rounded-xl mt-6"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.3 }}
+            >
+                <div className="card-body p-4 text-center">
+                    <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
+                </div>
+            </motion.div>
         </div>
     );
 }

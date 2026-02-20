@@ -31,6 +31,7 @@ const defaultState = {
     photos: [],
     waterLog: [],
     gymTemplates: [],
+    journal: [],
 };
 
 function loadState() {
@@ -214,6 +215,22 @@ function reducer(state, action) {
             return {
                 ...state,
                 gymTemplates: (state.gymTemplates || []).filter((_, i) => i !== action.index),
+            };
+
+        case 'ADD_JOURNAL':
+            return {
+                ...state,
+                journal: [...(state.journal || []), action.payload],
+            };
+        case 'EDIT_JOURNAL':
+            return {
+                ...state,
+                journal: (state.journal || []).map((j, i) => i === action.index ? action.payload : j),
+            };
+        case 'DELETE_JOURNAL':
+            return {
+                ...state,
+                journal: (state.journal || []).filter((_, i) => i !== action.index),
             };
 
         default:

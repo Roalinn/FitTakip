@@ -5,6 +5,7 @@ import BedenOlculeri from '../components/BedenOlculeri';
 import GymTakip from '../components/GymTakip';
 import FotoTakip from '../components/FotoTakip';
 import SuTakip from '../components/SuTakip';
+import Gunluk from '../components/Gunluk';
 import { useTranslation } from '../hooks/useTranslation';
 
 import { useStore } from '../store/useStore';
@@ -19,6 +20,7 @@ export default function Takip() {
         { key: 'beden', label: t('takip_tab_beden') },
         { key: 'gym', label: t('takip_tab_gym') },
         { key: 'su', label: t('takip_tab_su', 'Su Takip') },
+        { key: 'gunluk', label: t('takip_tab_gunluk', 'Günlük') },
         { key: 'foto', label: t('takip_tab_foto') },
     ];
 
@@ -27,6 +29,7 @@ export default function Takip() {
         beden: BedenOlculeri,
         gym: GymTakip,
         su: SuTakip,
+        gunluk: Gunluk,
         foto: FotoTakip,
     };
 
