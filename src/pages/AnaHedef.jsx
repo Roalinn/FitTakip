@@ -356,6 +356,16 @@ export default function AnaHedef() {
                             </p>
                         </motion.div>
                     )}
+
+                    {/* Motivational Quote */}
+                    <motion.div
+                        className="rounded-xl bg-base-200 px-5 py-3 text-center"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.45 }}
+                    >
+                        <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
+                    </motion.div>
                 </div>
             ) : (
                 <motion.div
@@ -377,18 +387,6 @@ export default function AnaHedef() {
             <div className="mt-6">
                 <Dashboard />
             </div>
-
-            {/* Motivational Quote */}
-            <motion.div
-                className="card bg-base-200 rounded-xl mt-6"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.3 }}
-            >
-                <div className="card-body p-4 text-center">
-                    <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
-                </div>
-            </motion.div>
         </div>
     );
 }
