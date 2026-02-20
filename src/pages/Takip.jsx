@@ -30,7 +30,7 @@ export default function Takip() {
         foto: FotoTakip,
     };
 
-    const ActiveComponent = components[activeTab];
+    const ActiveComponent = components[activeTab] || KiloTakip;
 
     return (
         <div>

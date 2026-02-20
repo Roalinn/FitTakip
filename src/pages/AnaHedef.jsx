@@ -403,7 +403,7 @@ export default function AnaHedef() {
                             </motion.div>
                         )}
 
-                        {/* BMR Estimation */}
+                        {/* Energy Estimation */}
                         {bmr !== null && (
                             <motion.div
                                 className="card bg-base-200 rounded-xl overflow-hidden relative"
@@ -411,19 +411,27 @@ export default function AnaHedef() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.45 }}
                             >
-                                <div className="card-body p-5 flex flex-row items-center gap-6">
-                                    <div
-                                        className={`radial-progress text-secondary`}
-                                        style={{ "--value": 100, "--size": "5.5rem", "--thickness": "6px" }}
-                                    >
-                                        <span className="text-xl">🔥</span>
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm font-medium mb-1">{t('bmr_title', 'Bazal Metabolizma Hızı')}</p>
-                                        <p className={`text-xl font-bold text-secondary`}>{Math.round(bmr)} <span className="text-sm font-normal text-base-content/60">kcal/gün</span></p>
-                                        <div className="mt-2 pt-2 border-t border-base-300">
-                                            <p className="text-xs text-base-content/50">{t('bmr_note', 'Dinlenirken harcanan enerji')}</p>
+                                <div className="card-body p-5 flex flex-col gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div
+                                            className={`radial-progress text-secondary`}
+                                            style={{ "--value": 100, "--size": "4.5rem", "--thickness": "5px" }}
+                                        >
+                                            <span className="text-xl">🔥</span>
                                         </div>
+                                        <div>
+                                            <p className="text-sm font-medium">{t('bmr_title', 'Bazal Metabolizma')}</p>
+                                            <p className={`text-lg font-bold text-secondary`}>{Math.round(bmr)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                        </div>
+                                        <div className="flex-1 text-right">
+                                            <p className="text-sm font-medium">{t('tdee_title', 'Günlük Kalori İhtiyacı')}</p>
+                                            <p className={`text-lg font-bold text-primary`}>{Math.round(bmr * 1.3)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                        </div>
+                                    </div>
+                                    <div className="pt-2 border-t border-base-300">
+                                        <p className="text-xs text-base-content/50 leading-relaxed">
+                                            {t('bmr_disclaimer', '* Bu değerler ortalama tahminlerdir. Kalori ihtiyacı (hareketlilik ortalama kabul edilmiştir) ve vücut yağ oranı kesin sonuçlar vermeyebilir.')}
+                                        </p>
                                     </div>
                                 </div>
                             </motion.div>

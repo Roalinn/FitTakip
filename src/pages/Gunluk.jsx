@@ -20,13 +20,16 @@ const ENERGY_OPTIONS = [
 export default function Gunluk() {
     const { state, dispatch } = useStore();
     const { t } = useTranslation();
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [showModal, setShowModal] = useState(false);
-    const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
 
+    const [currentMonth, setCurrentMonth] = useState(() => {
+        const now = new Date();
+        return { year: now.getFullYear(), month: now.getMonth() };
+    });
+    const [selectedDate, setSelectedDate] = useState(null);
     const [form, setForm] = useState({
-        date: selectedDate,
+        date: '',
         mood: 3,
         energy: 2,
         note: '',
@@ -34,35 +37,83 @@ export default function Gunluk() {
 
     const journal = state.journal || [];
 
-    // Get entries sorted by date (newest first)
-    const sortedEntries = useMemo(() => {
-        return [...journal].sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Build a map: dateString -> journal entries
+    const logMap = useMemo(() => {
+        const map = {};
+        journal.forEach((log, idx) => {
+            const key = log.date;
+            // Overwrite if exists, we only want 1 per day
+            map[key] = { ...log, _index: idx };
+        });
+        return map;
     }, [journal]);
 
-    // Today's entry
-    const todayKey = new Date().toISOString().split('T')[0];
-    const todayEntry = journal.find(j => j.date === todayKey);
+    // Calendar helpers
+    const { year, month } = currentMonth;
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDow = (firstDay.getDay() + 6) % 7; // Monday = 0
+    const daysInMonth = lastDay.getDate();
 
-    const openAdd = () => {
-        setEditIndex(null);
-        setForm({
-            date: selectedDate,
-            mood: 3,
-            energy: 2,
-            note: '',
+    const monthLabel = firstDay.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+
+    const prevMonth = () => {
+        setCurrentMonth((prev) => {
+            const m = prev.month - 1;
+            return m < 0 ? { year: prev.year - 1, month: 11 } : { year: prev.year, month: m };
         });
-        setShowModal(true);
+        setSelectedDate(null);
     };
 
-    const openEdit = (index) => {
-        const entry = journal[index];
-        setEditIndex(index);
-        setForm({
-            date: entry.date,
-            mood: entry.mood,
-            energy: entry.energy,
-            note: entry.note || '',
+    const nextMonth = () => {
+        setCurrentMonth((prev) => {
+            const m = prev.month + 1;
+            return m > 11 ? { year: prev.year + 1, month: 0 } : { year: prev.year, month: m };
         });
+        setSelectedDate(null);
+    };
+
+    const calendarDays = [];
+    for (let i = 0; i < startDow; i++) calendarDays.push(null);
+    for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
+
+    const makeDateKey = (day) => {
+        return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    };
+
+    const selectedDateKey = selectedDate ? makeDateKey(selectedDate) : null;
+    const selectedEntry = selectedDateKey ? logMap[selectedDateKey] : null;
+
+    const openAddOrEdit = () => {
+        const dateStr = selectedDateKey || new Date().toISOString().split('T')[0];
+
+        let existingIndex = null;
+        let existingEntry = null;
+
+        // If trying to add/edit on a specific date, find if it exists regardless of logMap just to be safe
+        const match = journal.findIndex(j => j.date === dateStr);
+        if (match !== -1) {
+            existingIndex = match;
+            existingEntry = journal[match];
+        }
+
+        if (existingEntry) {
+            setForm({
+                date: existingEntry.date,
+                mood: existingEntry.mood,
+                energy: existingEntry.energy,
+                note: existingEntry.note || '',
+                _editIndex: existingIndex
+            });
+        } else {
+            setForm({
+                date: dateStr,
+                mood: 3,
+                energy: 2,
+                note: '',
+                _editIndex: null
+            });
+        }
         setShowModal(true);
     };
 
@@ -75,13 +126,12 @@ export default function Gunluk() {
             note: form.note.trim(),
         };
 
-        if (editIndex !== null) {
-            dispatch({ type: 'EDIT_JOURNAL', index: editIndex, payload });
+        if (form._editIndex !== null && form._editIndex !== undefined) {
+            dispatch({ type: 'EDIT_JOURNAL', index: form._editIndex, payload });
         } else {
             dispatch({ type: 'ADD_JOURNAL', payload });
         }
         setShowModal(false);
-        setEditIndex(null);
     };
 
     const confirmDelete = () => {
@@ -94,7 +144,10 @@ export default function Gunluk() {
     const getMood = (val) => MOOD_OPTIONS.find(m => m.value === val) || MOOD_OPTIONS[2];
     const getEnergy = (val) => ENERGY_OPTIONS.find(e => e.value === val) || ENERGY_OPTIONS[1];
 
-    // Last 7 days mood trend removed
+    const DOW_LABELS = [
+        t('day_short_pzt', 'Pzt'), t('day_short_sal', 'Sal'), t('day_short_car', 'Çar'),
+        t('day_short_per', 'Per'), t('day_short_cum', 'Cum'), t('day_short_cmt', 'Cmt'), t('day_short_paz', 'Paz')
+    ];
 
     return (
         <div className="space-y-6">
@@ -103,75 +156,140 @@ export default function Gunluk() {
                     <h2 className="text-2xl font-bold">{t('gunluk_title', 'Günlük')}</h2>
                     <p className="text-sm text-base-content/50 mt-1">{t('gunluk_desc', 'Günlük notlarını ve ruh halini kaydet')}</p>
                 </div>
-                <button className="btn btn-primary rounded-xl" onClick={openAdd}>
+                <button className="btn btn-primary rounded-xl" onClick={() => { setSelectedDate(null); openAddOrEdit(); }}>
                     + {t('gunluk_add', 'Yeni Kayıt')}
                 </button>
             </div>
 
-            {/* Journal Entries */}
-            <div className="space-y-3 mt-4">
-                <h4 className="font-semibold text-sm">{t('gunluk_entries', 'Kayıtlar')}</h4>
-                {sortedEntries.length > 0 ? (
-                    sortedEntries.map((entry, i) => {
-                        const globalIndex = journal.indexOf(entry);
-                        return (
-                            <motion.div
-                                key={i}
-                                className="card bg-base-200 rounded-xl"
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.03 }}
-                            >
-                                <div className="card-body p-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{getMood(entry.mood).emoji}</span>
-                                            <div>
-                                                <p className="text-sm font-medium">
-                                                    {new Date(entry.date).toLocaleDateString('tr-TR', {
-                                                        day: 'numeric', month: 'long', year: 'numeric', weekday: 'long'
-                                                    })}
-                                                </p>
-                                                <p className="text-xs text-base-content/50">
-                                                    {getMood(entry.mood).label} · {getEnergy(entry.energy).emoji} {getEnergy(entry.energy).label}
-                                                </p>
-                                            </div>
+            {/* Calendar */}
+            <motion.div
+                className="card bg-base-200 rounded-xl"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <div className="card-body p-4">
+                    {/* Month nav */}
+                    <div className="flex items-center justify-between mb-4">
+                        <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={prevMonth}>
+                            ◀
+                        </button>
+                        <div className="flex items-center justify-center rounded-xl px-4 py-1">
+                            <h3 className="font-semibold capitalize text-lg text-center">{monthLabel}</h3>
+                        </div>
+                        <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={nextMonth}>
+                            ▶
+                        </button>
+                    </div>
+
+                    {/* Day of week headers */}
+                    <div className="grid grid-cols-7 gap-1 mb-1">
+                        {DOW_LABELS.map((d) => (
+                            <div key={d} className="text-center text-xs text-base-content/40 font-medium py-1">
+                                {d}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Days grid */}
+                    <div className="grid grid-cols-7 gap-1">
+                        {calendarDays.map((d, i) => {
+                            if (!d) return <div key={`empty-${i}`} className="p-2" />;
+
+                            const dateKey = makeDateKey(d);
+                            const hasLog = !!logMap[dateKey];
+                            const isSelected = selectedDate === d;
+                            const isToday = makeDateKey(d) === makeDateKey(new Date().getDate()); // rough today check logic (works mostly)
+
+                            return (
+                                <button
+                                    key={d}
+                                    onClick={() => setSelectedDate(d)}
+                                    className={`
+                                        aspect-square flex flex-col items-center justify-center rounded-xl p-1 relative
+                                        transition-all duration-200
+                                        ${isSelected ? 'bg-primary text-primary-content shadow-lg shadow-primary/20 scale-105' : 'hover:bg-base-300'}
+                                    `}
+                                >
+                                    <span className={`text-sm font-medium ${isToday && !isSelected ? 'text-primary' : ''}`}>
+                                        {d}
+                                    </span>
+                                    {hasLog && (
+                                        <div className={`w-1.5 h-1.5 rounded-full mt-1 ${isSelected ? 'bg-primary-content' : 'bg-success'}`} />
+                                    )}
+                                    {isToday && !isSelected && (
+                                        <div className="w-1 absolute bottom-1 h-1 rounded-full bg-primary" />
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Selected Date Entry */}
+            <AnimatePresence mode="popLayout">
+                {selectedDate && (
+                    <motion.div
+                        key={selectedDate}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                    >
+                        <div className="flex items-center justify-between px-1">
+                            <h4 className="font-semibold text-lg">
+                                {new Date(selectedDateKey).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })}
+                            </h4>
+                            {selectedEntry && (
+                                <div className="flex gap-2">
+                                    <button className="btn btn-ghost btn-sm text-info rounded-xl" onClick={openAddOrEdit}>
+                                        ✎ {t('modal_btn_edit', 'Düzenle')}
+                                    </button>
+                                    <button className="btn btn-ghost btn-sm text-error rounded-xl" onClick={() => setDeleteIndex(selectedEntry._index)}>
+                                        ✕ {t('modal_btn_delete', 'Sil')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {selectedEntry ? (
+                            <div className="card bg-base-200 rounded-xl">
+                                <div className="card-body p-5">
+                                    <div className="flex items-center justify-between mb-4 pb-4 border-b border-base-300">
+                                        <div className="flex flex-col items-center flex-1">
+                                            <span className="text-3xl mb-1">{getMood(selectedEntry.mood).emoji}</span>
+                                            <span className="text-sm font-medium">{getMood(selectedEntry.mood).label}</span>
+                                            <span className="text-xs text-base-content/50">{t('gunluk_mood', 'Ruh Hali')}</span>
                                         </div>
-                                        <div className="flex gap-1">
-                                            <button
-                                                className="btn btn-ghost btn-xs text-info"
-                                                style={{ transform: 'scaleX(-1)' }}
-                                                onClick={() => openEdit(globalIndex)}
-                                            >
-                                                ✎
-                                            </button>
-                                            <button
-                                                className="btn btn-ghost btn-xs text-error"
-                                                onClick={() => setDeleteIndex(globalIndex)}
-                                            >
-                                                ✕
-                                            </button>
+                                        <div className="w-px h-12 bg-base-300"></div>
+                                        <div className="flex flex-col items-center flex-1">
+                                            <span className="text-3xl mb-1">{getEnergy(selectedEntry.energy).emoji}</span>
+                                            <span className="text-sm font-medium">{getEnergy(selectedEntry.energy).label}</span>
+                                            <span className="text-xs text-base-content/50">{t('gunluk_energy', 'Enerji')}</span>
                                         </div>
                                     </div>
-                                    {entry.note && (
-                                        <p className="text-sm text-base-content/60 mt-2 border-t border-base-300 pt-2">
-                                            {entry.note}
+                                    {selectedEntry.note ? (
+                                        <p className="text-sm text-base-content/70 italic leading-relaxed whitespace-pre-wrap px-2">
+                                            "{selectedEntry.note}"
                                         </p>
+                                    ) : (
+                                        <p className="text-sm text-base-content/40 italic text-center">Not eklenmemiş.</p>
                                     )}
                                 </div>
-                            </motion.div>
-                        );
-                    })
-                ) : (
-                    <div className="card bg-base-200 rounded-xl">
-                        <div className="card-body items-center text-center py-8 text-base-content/40">
-                            <span className="text-4xl mb-2">📝</span>
-                            <p className="text-sm font-medium">{t('gunluk_empty', 'Henüz günlük kaydı yok.')}</p>
-                            <p className="text-xs">{t('gunluk_empty_desc', 'Bugün nasıl hissettiğini kaydet!')}</p>
-                        </div>
-                    </div>
+                            </div>
+                        ) : (
+                            <div className="card bg-base-200 rounded-xl border border-dashed border-base-300 hover:border-primary/50 transition-colors cursor-pointer" onClick={openAddOrEdit}>
+                                <div className="card-body items-center text-center py-8 text-base-content/50">
+                                    <span className="text-4xl mb-3 opacity-50">📝</span>
+                                    <p className="font-medium text-sm">{t('gunluk_no_entry', 'Bu tarihte kayıt yok')}</p>
+                                    <p className="text-xs opacity-70 mt-1">{t('gunluk_no_entry_desc', 'Kayıt eklemek için tıklayın')}</p>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
                 )}
-            </div>
+            </AnimatePresence>
 
             {/* Add/Edit Modal */}
             {showModal && (
@@ -183,7 +301,7 @@ export default function Gunluk() {
                         transition={{ duration: 0.2 }}
                     >
                         <h3 className="font-bold text-lg mb-4">
-                            {editIndex !== null ? t('gunluk_edit', 'Kaydı Düzenle') : t('gunluk_new', 'Yeni Günlük Kaydı')}
+                            {form._editIndex !== null ? t('gunluk_edit', 'Kaydı Düzenle') : t('gunluk_new', 'Yeni Günlük Kaydı')}
                         </h3>
                         <div className="space-y-4">
                             <div className="form-control">
@@ -244,15 +362,15 @@ export default function Gunluk() {
                             </div>
                         </div>
                         <div className="modal-action">
-                            <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>
+                            <button className="btn btn-ghost rounded-xl" onClick={() => setShowModal(false)}>
                                 {t('modal_btn_cancel', 'İptal')}
                             </button>
                             <button className="btn btn-primary rounded-xl" onClick={handleSave}>
-                                {editIndex !== null ? t('modal_btn_save', 'Kaydet') : t('modal_btn_add', 'Ekle')}
+                                {form._editIndex !== null ? t('modal_btn_save', 'Kaydet') : t('modal_btn_add', 'Ekle')}
                             </button>
                         </div>
                     </motion.div>
-                    <div className="modal-backdrop" onClick={() => { setShowModal(false); setEditIndex(null); }} />
+                    <div className="modal-backdrop" onClick={() => setShowModal(false)} />
                 </div>
             )}
 
