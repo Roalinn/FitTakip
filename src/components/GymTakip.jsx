@@ -403,20 +403,19 @@ export default function GymTakip() {
                                             <label className="label"><span className="label-text text-xs">{t('gym_templates', 'Şablonlar')}</span></label>
                                             <div className="flex flex-wrap gap-2">
                                                 {templates.map((tmpl, i) => (
-                                                    <div key={i} className="flex items-center gap-1">
-                                                        <button
-                                                            className="btn btn-sm btn-ghost bg-base-200 rounded-xl"
-                                                            onClick={() => loadTemplate(tmpl)}
-                                                        >
-                                                            📋 {tmpl.name}
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-ghost btn-xs text-error"
-                                                            onClick={() => deleteTemplate(i)}
+                                                    <button
+                                                        key={i}
+                                                        className="btn btn-sm btn-ghost bg-base-200 rounded-xl group"
+                                                        onClick={() => loadTemplate(tmpl)}
+                                                    >
+                                                        📋 {tmpl.name}
+                                                        <span
+                                                            className="text-error opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                                                            onClick={(e) => { e.stopPropagation(); deleteTemplate(i); }}
                                                         >
                                                             ✕
-                                                        </button>
-                                                    </div>
+                                                        </span>
+                                                    </button>
                                                 ))}
                                             </div>
                                         </div>

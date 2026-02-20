@@ -76,8 +76,56 @@ export default function AnaHedef() {
 
     const hasGoal = goal.startWeight && goal.targetWeight && goal.targetDate;
 
+    const MOTIVATIONAL_QUOTES = [
+        "Bugün dünden daha güçlüsün.",
+        "Küçük adımlar büyük değişimler yaratır.",
+        "Acı geçicidir, gurur kalıcıdır.",
+        "Vücudun sana teşekkür edecek.",
+        "Disiplin motivasyonun bittiği yerde başlar.",
+        "Her antrenman bir yatırımdır.",
+        "Hedefini unutma, yoluna devam et.",
+        "En zor adım ilk adımdır, onu zaten attın.",
+        "Bugünkü ter, yarının gülümsemesidir.",
+        "Limitlerini sen belirlersin.",
+        "Mükemmel olmak zorunda değilsin, tutarlı ol yeter.",
+        "Bir ay sonra başlamış olmayı dileyeceksin. Başla.",
+        "Kendinle yarış, başkasıyla değil.",
+        "Bedeni güçlü olan, zihni de güçlüdür.",
+        "Vazgeçme, en iyi versiyonun seni bekliyor.",
+        "Bugün kolay olmayacak ama buna değecek.",
+        "Her gün %1 daha iyi ol.",
+        "Başarı alışkanlıkların toplamıdır.",
+        "Rahatlık bölgesinin dışında büyürsün.",
+        "Terle, çalış, tekrarla.",
+        "Güçlü ol, kendin için yap.",
+        "Hedefin seni ayağa kaldırsın.",
+        "Dün bıraktığın yerden devam et.",
+        "Süreç zor ama sonuç muhteşem.",
+        "Bugün yapmak istemediğin şeyi yap, farkı o yaratır.",
+        "Sen düşündüğünden daha güçlüsün.",
+        "İlerleme mükemmellikten önemlidir.",
+        "Sadece başla, gerisini vücudun halleder.",
+        "Bu bir maraton, sprint değil. Sabırlı ol.",
+        "Kendine verdiğin sözü tut.",
+    ];
+
+    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    const todayQuote = MOTIVATIONAL_QUOTES[dayOfYear % MOTIVATIONAL_QUOTES.length];
+
     return (
         <div>
+            {/* Motivational Quote */}
+            <motion.div
+                className="card bg-base-200 rounded-xl mb-6"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+            >
+                <div className="card-body p-4 text-center">
+                    <p className="text-sm italic text-base-content/70">💪 "{todayQuote}"</p>
+                </div>
+            </motion.div>
+
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-2xl font-bold">{t('anahedef_title')}</h2>
