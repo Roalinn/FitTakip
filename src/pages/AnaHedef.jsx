@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 import Dashboard from '../components/Dashboard';
+
 export default function AnaHedef() {
     const { state, dispatch } = useStore();
     const { goal, weightLog } = state;
     const { t } = useTranslation();
 
     const [editing, setEditing] = useState(false);
+    useHardwareBack(editing, () => setEditing(false));
+
     const [form, setForm] = useState({
         startWeight: goal.startWeight || '',
         targetWeight: goal.targetWeight || '',
