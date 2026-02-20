@@ -27,7 +27,7 @@ export default function App() {
     const PageComponent = pages[activePage];
 
     return (
-        <div className="flex h-screen bg-base-100 text-base-content overflow-hidden">
+        <div className="flex h-screen bg-gradient-to-br from-base-100 via-base-200/50 to-base-300/80 text-base-content overflow-hidden">
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <motion.div

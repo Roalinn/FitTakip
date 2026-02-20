@@ -165,7 +165,7 @@ export default function GymTakip() {
 
             {/* Calendar */}
             <motion.div
-                className="card bg-base-200 rounded-xl max-w-md mx-auto"
+                className="card bg-base-200 rounded-xl"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
             >
@@ -210,7 +210,7 @@ export default function GymTakip() {
                                 <button
                                     key={day}
                                     className={`
-                    aspect-square max-w-[2.5rem] w-full mx-auto rounded-xl text-sm font-medium transition-all duration-150
+                    aspect-square rounded-xl text-sm font-medium transition-all duration-150
                     flex items-center justify-center relative
                     ${isSelected
                                             ? 'bg-primary text-primary-content shadow-md shadow-primary/20'
