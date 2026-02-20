@@ -242,10 +242,10 @@ export default function GymTakip() {
                 {subTab === 'takip' && (
                     <div className="flex gap-2">
                         <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
-                            🏃‍♂️ {t('gym_btn_cardio', 'Kardiyo')}
+                            {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
                         </button>
                         <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
-                            🏋️‍♂️ {t('gym_btn_add', 'Antrenman')}
+                            {t('gym_btn_add_ext', 'Antrenman Ekle')}
                         </button>
                     </div>
                 )}
@@ -344,79 +344,41 @@ export default function GymTakip() {
                                 </div>
 
                                 {selectedLogs.length > 0 ? (
-                                    <div className="space-y-4">
-                                        {selectedLogs.map(log => {
-                                            const isCardio = log.type === 'cardio';
-                                            return (
-                                                <div key={log._index} className="card bg-base-200 rounded-xl overflow-hidden relative">
-                                                    <div className={`absolute top-0 left-0 w-1.5 h-full ${isCardio ? 'bg-secondary' : 'bg-primary'}`}></div>
-                                                    <div className="card-body p-4 pl-6">
-                                                        <div className="flex justify-between items-center mb-2">
-                                                            <h5 className="font-semibold text-sm">
-                                                                {isCardio ? <span className="text-secondary">🏃‍♂️ Kardiyo</span> : <span className="text-primary">🏋️‍♂️ Ağırlık Antrenmanı</span>}
-                                                            </h5>
-                                                            <div className="flex gap-1">
-                                                                <button
-                                                                    className="btn btn-ghost btn-xs text-info"
-                                                                    style={{ transform: 'scaleX(-1)' }}
-                                                                    onClick={() => openEdit(log._index)}
-                                                                >
-                                                                    ✎
-                                                                </button>
-                                                                <button
-                                                                    className="btn btn-ghost btn-xs text-error"
-                                                                    onClick={() => setDeleteIndex(log._index)}
-                                                                >
-                                                                    ✕
-                                                                </button>
-                                                            </div>
+                                    <div className="card bg-base-200 rounded-xl">
+                                        <div className="card-body p-4 space-y-3">
+                                            {selectedLogs.map(log => {
+                                                const isCardio = log.type === 'cardio';
+                                                return (
+                                                    <div key={log._index} className="relative group p-1">
+                                                        <div className="absolute right-0 top-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button className="btn btn-ghost btn-xs text-info px-1" onClick={() => openEdit(log._index)}>✎</button>
+                                                            <button className="btn btn-ghost btn-xs text-error px-1" onClick={() => setDeleteIndex(log._index)}>✕</button>
                                                         </div>
-                                                        <div className="overflow-x-auto">
-                                                            <table className="table table-sm">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>{t('gym_move', 'Hareket')}</th>
-                                                                        {isCardio ? (
-                                                                            <>
-                                                                                <th>{t('gym_distance', 'Mesafe')}</th>
-                                                                                <th>{t('gym_duration', 'Süre')}</th>
-                                                                                <th>{t('gym_speed', 'Ortalama Hız')}</th>
-                                                                            </>
-                                                                        ) : (
-                                                                            <>
-                                                                                <th>{t('gym_sets', 'Set')}</th>
-                                                                                <th>{t('gym_reps', 'Tekrar')}</th>
-                                                                                <th>{t('gym_weight', 'Ağırlık')}</th>
-                                                                            </>
-                                                                        )}
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {log.exercises.map((ex, j) => (
-                                                                        <tr key={j}>
-                                                                            <td className="font-medium">{ex.name}</td>
-                                                                            {isCardio ? (
-                                                                                <>
-                                                                                    <td>{ex.distance ? `${ex.distance} km` : '—'}</td>
-                                                                                    <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
-                                                                                    <td>{ex.speed ? `${ex.speed} km/s` : '—'}</td>
-                                                                                </>
-                                                                            ) : (
-                                                                                <>
-                                                                                    <td>{ex.sets || '—'}</td>
-                                                                                    <td>{ex.reps || '—'}</td>
-                                                                                    <td>{ex.weight || '—'}</td>
-                                                                                </>
-                                                                            )}
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
+                                                        <div className="pr-14 space-y-2">
+                                                            {log.exercises.map((ex, j) => (
+                                                                <div key={j} className="flex flex-wrap items-center gap-2 text-sm">
+                                                                    <span className="font-semibold">{ex.name}</span>
+                                                                    <span className="text-base-content/30">-</span>
+                                                                    {isCardio ? (
+                                                                        <div className="flex gap-2 text-base-content/80">
+                                                                            {ex.distance && <span>{ex.distance} km</span>}
+                                                                            {ex.duration && <span>{ex.duration} dk</span>}
+                                                                            {ex.speed && <span>{ex.speed} km/s</span>}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="flex gap-2 text-base-content/80">
+                                                                            {ex.sets && <span>{ex.sets} set</span>}
+                                                                            {ex.reps && <span>{ex.reps} tekrar</span>}
+                                                                            {ex.weight && <span>{ex.weight} kg</span>}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })}
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="card bg-base-200 rounded-xl">
