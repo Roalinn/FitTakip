@@ -38,7 +38,7 @@ export default function Dashboard() {
                                         </div>
                                         {meal.foods && (
                                             <p className="text-xs text-base-content/40 mt-0.5 ml-[3.5rem] truncate">
-                                                {meal.foods.split(',').map(f => f.trim()).filter(Boolean).join(', ')}
+                                                {Array.isArray(meal.foods) ? meal.foods.join(', ') : String(meal.foods).split(',').map(f => f.trim()).filter(Boolean).join(', ')}
                                             </p>
                                         )}
                                     </div>
