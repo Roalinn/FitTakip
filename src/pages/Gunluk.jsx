@@ -161,7 +161,7 @@ export default function Gunluk() {
                     <p className="text-sm text-base-content/50 mt-1">{t('gunluk_desc', 'Günlük notlarını ve ruh halini kaydet')}</p>
                 </div>
                 <button className="btn btn-primary rounded-xl" onClick={() => { setSelectedDate(null); openAddOrEdit(); }}>
-                    + {t('gunluk_add', 'Yeni Kayıt')}
+                    {t('gunluk_add', '+ Yeni Kayıt')}
                 </button>
             </div>
 

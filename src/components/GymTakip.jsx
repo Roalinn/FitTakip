@@ -245,7 +245,7 @@ export default function GymTakip() {
                 </div>
                 {subTab === 'takip' && (
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <button className="btn btn-secondary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('cardio')}>
+                        <button className="btn btn-primary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('cardio')}>
                             + {t('gym_btn_cardio_add', 'Kardiyo')}
                         </button>
                         <button className="btn btn-primary btn-sm rounded-xl flex-1 sm:flex-none" onClick={() => openAdd('weight')}>
@@ -360,19 +360,19 @@ export default function GymTakip() {
                                                         </div>
                                                         <div className="pr-14 space-y-2">
                                                             {log.exercises.map((ex, j) => (
-                                                                <div key={j} className="grid grid-cols-12 gap-2 text-sm items-center">
-                                                                    <div className="col-span-5 font-semibold truncate" title={ex.name}>{ex.name}</div>
+                                                                <div key={j} className="grid grid-cols-12 gap-1 text-sm items-center">
+                                                                    <div className="col-span-4 font-semibold truncate" title={ex.name}>{ex.name}</div>
                                                                     {isCardio ? (
                                                                         <>
-                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.distance ? `${ex.distance} km` : '-'}</div>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.duration ? `${ex.duration} dk` : '-'}</div>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.speed ? `${ex.speed} km/s` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.distance ? `${ex.distance} km` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.duration ? `${ex.duration} dk` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.speed ? `${ex.speed} km/s` : '-'}</div>
                                                                         </>
                                                                     ) : (
                                                                         <>
-                                                                            <div className="col-span-3 text-right text-base-content/80 text-xs sm:text-sm">{ex.sets ? `${ex.sets} set` : '-'}</div>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-xs sm:text-sm">{ex.weight ? `${ex.weight} kg` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.sets ? `${ex.sets} set` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.weight ? `${ex.weight} kg` : '-'}</div>
                                                                         </>
                                                                     )}
                                                                 </div>
@@ -471,32 +471,32 @@ export default function GymTakip() {
                                                 </div>
                                                 {form.logType === 'cardio' ? (
                                                     <>
-                                                        <div className="w-20">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_dist', 'Mesafe')}</span></label>}
-                                                            <input type="number" step="0.1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.distance || ''} onChange={(e) => updateExercise(i, 'distance', e.target.value)} placeholder="km" />
+                                                        <div className="w-12 sm:w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_dist', 'Msf')}</span></label>}
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.distance || ''} onChange={(e) => updateExercise(i, 'distance', e.target.value)} placeholder="km" />
                                                         </div>
-                                                        <div className="w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_dur', 'Süre')}</span></label>}
-                                                            <input type="number" step="1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.duration || ''} onChange={(e) => updateExercise(i, 'duration', e.target.value)} placeholder="dk" />
+                                                        <div className="w-12 sm:w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_dur', 'Süre')}</span></label>}
+                                                            <input type="number" step="1" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.duration || ''} onChange={(e) => updateExercise(i, 'duration', e.target.value)} placeholder="dk" />
                                                         </div>
-                                                        <div className="w-20">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_spd', 'Hız')}</span></label>}
-                                                            <input type="number" step="0.1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.speed || ''} onChange={(e) => updateExercise(i, 'speed', e.target.value)} placeholder="km/s" />
+                                                        <div className="w-14 sm:w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_spd', 'Hız')}</span></label>}
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.speed || ''} onChange={(e) => updateExercise(i, 'speed', e.target.value)} placeholder="km/s" />
                                                         </div>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <div className="w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_sets', 'Set')}</span></label>}
-                                                            <input type="number" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.sets || ''} onChange={(e) => updateExercise(i, 'sets', e.target.value)} placeholder="4" />
+                                                        <div className="w-12 sm:w-14">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_sets', 'Set')}</span></label>}
+                                                            <input type="number" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.sets || ''} onChange={(e) => updateExercise(i, 'sets', e.target.value)} placeholder="4" />
                                                         </div>
-                                                        <div className="w-16">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_reps', 'Tekrar')}</span></label>}
-                                                            <input type="number" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.reps || ''} onChange={(e) => updateExercise(i, 'reps', e.target.value)} placeholder="12" />
+                                                        <div className="w-12 sm:w-14">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_reps', 'Tkr')}</span></label>}
+                                                            <input type="number" inputMode="numeric" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.reps || ''} onChange={(e) => updateExercise(i, 'reps', e.target.value)} placeholder="12" />
                                                         </div>
-                                                        <div className="w-20">
-                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_weight', 'Ağırlık')}</span></label>}
-                                                            <input type="text" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.weight || ''} onChange={(e) => updateExercise(i, 'weight', e.target.value)} placeholder="kg" />
+                                                        <div className="w-14 sm:w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] sm:text-xs break-all truncate">{t('gym_weight', 'Ağr')}</span></label>}
+                                                            <input type="number" step="0.1" inputMode="decimal" className="input input-bordered input-sm rounded-xl w-full px-1 sm:px-2 text-center" value={ex.weight || ''} onChange={(e) => updateExercise(i, 'weight', e.target.value)} placeholder="kg" />
                                                         </div>
                                                     </>
                                                 )}
