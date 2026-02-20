@@ -164,24 +164,35 @@ export default function KiloTakip() {
                                 <tbody>
                                     {state.weightLog.map((entry, i) => (
                                         <tr key={i}>
-                                            <td>{new Date(entry.date).toLocaleDateString()}</td>
-                                            <td className="font-medium">{entry.weight} kg</td>
                                             <td>
-                                                <div className="flex gap-1">
-                                                    <button
-                                                        className="btn btn-ghost btn-xs text-info"
-                                                        style={{ transform: 'scaleX(-1)' }}
-                                                        onClick={() => openEdit(i)}
-                                                    >
-                                                        ✎
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-ghost btn-xs text-error"
-                                                        onClick={() => setDeleteIndex(i)}
-                                                    >
-                                                        ✕
-                                                    </button>
+                                                <div className="flex flex-col">
+                                                    <span>{new Date(entry.date).toLocaleDateString()}</span>
+                                                    {entry.isInitial && <span className="text-[10px] text-primary font-semibold tracking-wider uppercase leading-none mt-0.5">{t('kilo_initial_weight', 'Başlangıç Kilosu')}</span>}
                                                 </div>
+                                            </td>
+                                            <td className="font-medium align-middle">{entry.weight} kg</td>
+                                            <td className="align-middle">
+                                                {!entry.isInitial ? (
+                                                    <div className="flex gap-1 justify-end">
+                                                        <button
+                                                            className="btn btn-ghost btn-xs text-info"
+                                                            style={{ transform: 'scaleX(-1)' }}
+                                                            onClick={() => openEdit(i)}
+                                                        >
+                                                            ✎
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-ghost btn-xs text-error"
+                                                            onClick={() => setDeleteIndex(i)}
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex justify-end pr-3">
+                                                        <span className="text-xs text-base-content/30" title={t('kilo_initial_weight_tooltip', 'Başlangıç kilosu Ana Hedef bölümünden değiştirilebilir')}>🔒</span>
+                                                    </div>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

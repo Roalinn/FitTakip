@@ -138,6 +138,25 @@ function reducer(state, action) {
                 ...state,
                 weightLog: state.weightLog.filter((_, i) => i !== action.index),
             };
+        case 'SET_INITIAL_WEIGHT': {
+            const initialLogIndex = state.weightLog.findIndex(w => w.isInitial);
+            let newLogs = [...state.weightLog];
+            if (initialLogIndex >= 0) {
+                newLogs[initialLogIndex] = { ...newLogs[initialLogIndex], weight: action.payload.weight };
+            } else {
+                const todayStr = new Date().toISOString().split('T')[0];
+                const existingTodayIndex = newLogs.findIndex(w => w.date === todayStr);
+                if (existingTodayIndex >= 0 && !newLogs[existingTodayIndex].isInitial) {
+                    newLogs[existingTodayIndex] = { ...newLogs[existingTodayIndex], weight: action.payload.weight, isInitial: true };
+                } else {
+                    newLogs.push({ date: todayStr, weight: action.payload.weight, isInitial: true });
+                }
+            }
+            return {
+                ...state,
+                weightLog: newLogs.sort((a, b) => new Date(a.date) - new Date(b.date))
+            };
+        }
 
         case 'ADD_BODY_MEASUREMENT':
             return {

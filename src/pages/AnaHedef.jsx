@@ -113,14 +113,10 @@ export default function AnaHedef() {
 
         // Add to weight tracking if start weight changed or is being set
         if (payload.startWeight && (!goal.startWeight || goal.startWeight !== payload.startWeight)) {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const hasLogToday = weightLog.some(l => l.date === todayStr);
-            if (!hasLogToday) {
-                dispatch({
-                    type: 'ADD_WEIGHT',
-                    payload: { date: todayStr, weight: payload.startWeight, photo: null }
-                });
-            }
+            dispatch({
+                type: 'SET_INITIAL_WEIGHT',
+                payload: { weight: payload.startWeight }
+            });
         }
 
         setEditing(false);
