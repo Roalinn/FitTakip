@@ -193,28 +193,33 @@ export default function Gunluk() {
                     {/* Days grid */}
                     <div className="grid grid-cols-7 gap-1">
                         {calendarDays.map((d, i) => {
-                            if (!d) return <div key={`empty-${i}`} className="p-2" />;
+                            if (!d) return <div key={`empty-${i}`} className="p-1" />;
 
                             const dateKey = makeDateKey(d);
-                            const hasLog = !!logMap[dateKey];
+                            const logEntry = logMap[dateKey];
+                            const hasLog = !!logEntry;
                             const isSelected = selectedDate === d;
                             const isToday = makeDateKey(d) === makeDateKey(new Date().getDate()); // rough today check logic (works mostly)
+
+                            const moodObj = hasLog ? getMood(logEntry.mood) : null;
 
                             return (
                                 <button
                                     key={d}
                                     onClick={() => setSelectedDate(d)}
                                     className={`
-                                        aspect-square flex flex-col items-center justify-center rounded-xl p-1 relative
+                                        h-14 flex flex-col items-center justify-start rounded-xl p-1 relative
                                         transition-all duration-200
-                                        ${isSelected ? 'bg-primary text-primary-content shadow-lg shadow-primary/20 scale-105' : 'hover:bg-base-300'}
+                                        ${isSelected ? 'bg-primary text-primary-content shadow-lg shadow-primary/20 scale-105 z-10' : 'hover:bg-base-300'}
                                     `}
                                 >
-                                    <span className={`text-sm font-medium ${isToday && !isSelected ? 'text-primary' : ''}`}>
+                                    <span className={`text-xs font-medium mb-0.5 ${isToday && !isSelected ? 'text-primary' : ''}`}>
                                         {d}
                                     </span>
                                     {hasLog && (
-                                        <div className={`w-1.5 h-1.5 rounded-full mt-1 ${isSelected ? 'bg-primary-content' : 'bg-success'}`} />
+                                        <div className="text-xl leading-none" title={moodObj.label}>
+                                            {moodObj.emoji}
+                                        </div>
                                     )}
                                     {isToday && !isSelected && (
                                         <div className="w-1 absolute bottom-1 h-1 rounded-full bg-primary" />

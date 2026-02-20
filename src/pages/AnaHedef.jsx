@@ -396,7 +396,9 @@ export default function AnaHedef() {
                                         <p className="text-sm font-medium mb-1">{t('bf_title', 'Vücut Yağ Oranı')}</p>
                                         <p className={`text-lg font-bold ${bfColor}`}>{bfCategory}</p>
                                         <div className="mt-2 pt-2 border-t border-base-300">
-                                            <p className="text-xs text-base-content/50">{t('bf_note', 'Deurenberg formülüyle tahmini')}</p>
+                                            <p className="text-xs text-base-content/50 leading-relaxed">
+                                                {t('bf_note', '* Deurenberg formülüyle tahmini hesaplanmıştır. Tıbbi veya kesin bir sonuç vermez.')}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -419,18 +421,20 @@ export default function AnaHedef() {
                                         >
                                             <span className="text-xl">🔥</span>
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-medium">{t('bmr_title', 'Bazal Metabolizma')}</p>
-                                            <p className={`text-lg font-bold text-secondary`}>{Math.round(bmr)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
-                                        </div>
-                                        <div className="flex-1 text-right">
-                                            <p className="text-sm font-medium">{t('tdee_title', 'Günlük Kalori İhtiyacı')}</p>
-                                            <p className={`text-lg font-bold text-primary`}>{Math.round(bmr * 1.3)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                        <div className="flex flex-col gap-2 flex-1">
+                                            <div>
+                                                <p className="text-sm font-medium text-base-content/70">{t('bmr_title', 'Bazal Metabolizma')}</p>
+                                                <p className={`text-lg font-bold text-secondary`}>{Math.round(bmr)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                            </div>
+                                            <div className="border-t border-base-300 pt-1">
+                                                <p className="text-sm font-medium text-base-content/70">{t('tdee_title', 'Günlük Kalori İhtiyacı')}</p>
+                                                <p className={`text-lg font-bold text-primary`}>{Math.round(bmr * 1.3)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="pt-2 border-t border-base-300">
                                         <p className="text-xs text-base-content/50 leading-relaxed">
-                                            {t('bmr_disclaimer', '* Bu değerler ortalama tahminlerdir. Kalori ihtiyacı (hareketlilik ortalama kabul edilmiştir) ve vücut yağ oranı kesin sonuçlar vermeyebilir.')}
+                                            {t('bmr_disclaimer', '* Hareketlilik seviyesi ortalama kabul edilerek hesaplanmış tahmini değerlerdir.')}
                                         </p>
                                     </div>
                                 </div>
