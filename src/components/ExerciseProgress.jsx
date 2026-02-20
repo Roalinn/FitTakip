@@ -219,7 +219,7 @@ export default function ExerciseProgress() {
                                                 <span className="text-xs text-base-content/50 font-mono">{entry.sets}×{entry.reps}</span>
                                             )}
                                             {entry.duration > 0 && (
-                                                <span className="text-sm font-bold text-info">{entry.duration} dk</span>
+                                                <span className="text-sm font-bold text-primary">{entry.duration} dk</span>
                                             )}
                                         </div>
                                     </div>

@@ -278,25 +278,6 @@ export default function GymTakip() {
                                 {selectedLogs.length > 0 ? (
                                     <div className="card bg-base-200 rounded-xl">
                                         <div className="card-body p-4">
-                                            <div className="flex items-center justify-end gap-1 mb-2">
-                                                {selectedLogs.map((log, i) => (
-                                                    <div key={i} className="flex gap-1">
-                                                        <button
-                                                            className="btn btn-ghost btn-xs text-info"
-                                                            style={{ transform: 'scaleX(-1)' }}
-                                                            onClick={() => openEdit(log._index)}
-                                                        >
-                                                            ✎
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-ghost btn-xs text-error"
-                                                            onClick={() => setDeleteIndex(log._index)}
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
                                             <div className="overflow-x-auto">
                                                 <table className="table table-sm">
                                                     <thead>
@@ -306,6 +287,7 @@ export default function GymTakip() {
                                                             <th>{t('gym_reps', 'Tekrar')}</th>
                                                             <th>{t('gym_weight', 'Ağırlık')}</th>
                                                             <th>{t('gym_duration', 'Süre')}</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -317,6 +299,25 @@ export default function GymTakip() {
                                                                     <td>{ex.reps || '—'}</td>
                                                                     <td>{ex.weight || '—'}</td>
                                                                     <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
+                                                                    <td className="text-right">
+                                                                        {j === 0 && (
+                                                                            <div className="flex gap-1 justify-end">
+                                                                                <button
+                                                                                    className="btn btn-ghost btn-xs text-info"
+                                                                                    style={{ transform: 'scaleX(-1)' }}
+                                                                                    onClick={() => openEdit(log._index)}
+                                                                                >
+                                                                                    ✎
+                                                                                </button>
+                                                                                <button
+                                                                                    className="btn btn-ghost btn-xs text-error"
+                                                                                    onClick={() => setDeleteIndex(log._index)}
+                                                                                >
+                                                                                    ✕
+                                                                                </button>
+                                                                            </div>
+                                                                        )}
+                                                                    </td>
                                                                 </tr>
                                                             ))
                                                         )}
