@@ -278,57 +278,51 @@ export default function GymTakip() {
                                 {selectedLogs.length > 0 ? (
                                     <div className="card bg-base-200 rounded-xl">
                                         <div className="card-body p-4">
-                                            {selectedLogs.map((log, i) => (
-                                                <div key={i}>
-                                                    {i > 0 && <div className="divider my-1"></div>}
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <span className="text-xs text-base-content/50">
-                                                            {log.exercises.length} {t('gym_moves_count', 'hareket')}
-                                                        </span>
-                                                        <div className="flex gap-1">
-                                                            <button
-                                                                className="btn btn-ghost btn-xs text-info"
-                                                                style={{ transform: 'scaleX(-1)' }}
-                                                                onClick={() => openEdit(log._index)}
-                                                            >
-                                                                ✎
-                                                            </button>
-                                                            <button
-                                                                className="btn btn-ghost btn-xs text-error"
-                                                                onClick={() => setDeleteIndex(log._index)}
-                                                            >
-                                                                ✕
-                                                            </button>
-                                                        </div>
+                                            <div className="flex items-center justify-end gap-1 mb-2">
+                                                {selectedLogs.map((log, i) => (
+                                                    <div key={i} className="flex gap-1">
+                                                        <button
+                                                            className="btn btn-ghost btn-xs text-info"
+                                                            style={{ transform: 'scaleX(-1)' }}
+                                                            onClick={() => openEdit(log._index)}
+                                                        >
+                                                            ✎
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-ghost btn-xs text-error"
+                                                            onClick={() => setDeleteIndex(log._index)}
+                                                        >
+                                                            ✕
+                                                        </button>
                                                     </div>
-                                                    <div className="overflow-x-auto">
-                                                        <table className="table table-sm table-zebra">
-                                                            {i === 0 && (
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>{t('gym_move', 'Hareket')}</th>
-                                                                        <th>{t('gym_sets', 'Set')}</th>
-                                                                        <th>{t('gym_reps', 'Tekrar')}</th>
-                                                                        <th>{t('gym_weight', 'Ağırlık')}</th>
-                                                                        <th>{t('gym_duration', 'Süre')}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                            )}
-                                                            <tbody>
-                                                                {log.exercises.map((ex, j) => (
-                                                                    <tr key={j}>
-                                                                        <td className="font-medium">{ex.name}</td>
-                                                                        <td>{ex.sets || '—'}</td>
-                                                                        <td>{ex.reps || '—'}</td>
-                                                                        <td>{ex.weight || '—'}</td>
-                                                                        <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                ))}
+                                            </div>
+                                            <div className="overflow-x-auto">
+                                                <table className="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{t('gym_move', 'Hareket')}</th>
+                                                            <th>{t('gym_sets', 'Set')}</th>
+                                                            <th>{t('gym_reps', 'Tekrar')}</th>
+                                                            <th>{t('gym_weight', 'Ağırlık')}</th>
+                                                            <th>{t('gym_duration', 'Süre')}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {selectedLogs.flatMap(log =>
+                                                            log.exercises.map((ex, j) => (
+                                                                <tr key={`${log._index}-${j}`}>
+                                                                    <td className="font-medium">{ex.name}</td>
+                                                                    <td>{ex.sets || '—'}</td>
+                                                                    <td>{ex.reps || '—'}</td>
+                                                                    <td>{ex.weight || '—'}</td>
+                                                                    <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
