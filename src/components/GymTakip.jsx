@@ -57,6 +57,15 @@ export default function GymTakip() {
         setSelectedDate(null);
     };
 
+    const handleTouchStart = (e) => setTouchStartX(e.touches[0].clientX);
+    const handleTouchEnd = (e) => {
+        if (touchStartX === null) return;
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (diff > 50) nextMonth();
+        if (diff < -50) prevMonth();
+        setTouchStartX(null);
+    };
+
     const calendarDays = [];
     for (let i = 0; i < startDow; i++) calendarDays.push(null);
     for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
