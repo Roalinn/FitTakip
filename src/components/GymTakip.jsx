@@ -276,12 +276,13 @@ export default function GymTakip() {
                                 </div>
 
                                 {selectedLogs.length > 0 ? (
-                                    <div className="space-y-3">
-                                        {selectedLogs.map((log, i) => (
-                                            <div key={i} className="card bg-base-200 rounded-xl">
-                                                <div className="card-body p-4">
-                                                    <div className="flex items-center justify-between mb-3">
-                                                        <span className="text-sm text-base-content/50">
+                                    <div className="card bg-base-200 rounded-xl">
+                                        <div className="card-body p-4">
+                                            {selectedLogs.map((log, i) => (
+                                                <div key={i}>
+                                                    {i > 0 && <div className="divider my-1"></div>}
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-xs text-base-content/50">
                                                             {log.exercises.length} {t('gym_moves_count', 'hareket')}
                                                         </span>
                                                         <div className="flex gap-1">
@@ -301,32 +302,34 @@ export default function GymTakip() {
                                                         </div>
                                                     </div>
                                                     <div className="overflow-x-auto">
-                                                        <table className="table table-sm">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>{t('gym_move', 'Hareket')}</th>
-                                                                    <th>{t('gym_sets', 'Set')}</th>
-                                                                    <th>{t('gym_reps', 'Tekrar')}</th>
-                                                                    <th>{t('gym_duration', 'Süre')}</th>
-                                                                    <th>{t('gym_weight', 'Ağırlık')}</th>
-                                                                </tr>
-                                                            </thead>
+                                                        <table className="table table-sm table-zebra">
+                                                            {i === 0 && (
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>{t('gym_move', 'Hareket')}</th>
+                                                                        <th>{t('gym_sets', 'Set')}</th>
+                                                                        <th>{t('gym_reps', 'Tekrar')}</th>
+                                                                        <th>{t('gym_weight', 'Ağırlık')}</th>
+                                                                        <th>{t('gym_duration', 'Süre')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                            )}
                                                             <tbody>
                                                                 {log.exercises.map((ex, j) => (
                                                                     <tr key={j}>
                                                                         <td className="font-medium">{ex.name}</td>
                                                                         <td>{ex.sets || '—'}</td>
                                                                         <td>{ex.reps || '—'}</td>
-                                                                        <td>{ex.duration || '—'}</td>
                                                                         <td>{ex.weight || '—'}</td>
+                                                                        <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="card bg-base-200 rounded-xl">

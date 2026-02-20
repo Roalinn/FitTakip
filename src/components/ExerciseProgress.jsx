@@ -73,29 +73,14 @@ export default function ExerciseProgress() {
 
         if (isDurationBased) {
             const maxDuration = Math.max(...progressData.map(d => d.duration));
-            const totalDuration = progressData.reduce((sum, d) => sum + d.duration, 0);
-            return {
-                mode: 'duration',
-                maxDuration,
-                totalDuration: totalDuration.toFixed(0),
-                sessionCount: progressData.length,
-            };
+            return { mode: 'duration', maxDuration };
         }
 
         const maxWeight = Math.max(...progressData.map(d => d.weight));
         const bestEntry = progressData.find(d => d.weight === maxWeight);
-        const totalVolume = progressData.reduce((sum, d) => sum + d.volume, 0);
-
-        let estimated1RM = maxWeight;
-        if (bestEntry && bestEntry.reps > 1) {
-            estimated1RM = maxWeight * (1 + bestEntry.reps / 30);
-        }
-
         return {
             mode: 'weight',
             maxWeight,
-            estimated1RM: estimated1RM.toFixed(1),
-            totalVolume: totalVolume.toFixed(0),
             bestSet: bestEntry ? `${bestEntry.weight}kg × ${bestEntry.sets}×${bestEntry.reps}` : '—',
         };
     }, [progressData, isDurationBased]);
@@ -136,7 +121,7 @@ export default function ExerciseProgress() {
                 <>
                     {/* Stats */}
                     {stats && stats.mode === 'weight' && (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 gap-3">
                             <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                                 <div className="card-body p-3 text-center">
                                     <p className="text-xs text-base-content/50">{t('exercise_max_weight')}</p>
@@ -144,18 +129,6 @@ export default function ExerciseProgress() {
                                 </div>
                             </motion.div>
                             <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-                                <div className="card-body p-3 text-center">
-                                    <p className="text-xs text-base-content/50">{t('exercise_estimated_1rm')}</p>
-                                    <p className="text-xl font-bold text-secondary">{stats.estimated1RM} kg</p>
-                                </div>
-                            </motion.div>
-                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                                <div className="card-body p-3 text-center">
-                                    <p className="text-xs text-base-content/50">{t('exercise_total_volume')}</p>
-                                    <p className="text-xl font-bold text-accent">{Number(stats.totalVolume).toLocaleString()} kg</p>
-                                </div>
-                            </motion.div>
-                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                                 <div className="card-body p-3 text-center">
                                     <p className="text-xs text-base-content/50">{t('exercise_best_set')}</p>
                                     <p className="text-lg font-bold text-warning">{stats.bestSet}</p>
@@ -165,23 +138,11 @@ export default function ExerciseProgress() {
                     )}
 
                     {stats && stats.mode === 'duration' && (
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 gap-3">
                             <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                                 <div className="card-body p-3 text-center">
                                     <p className="text-xs text-base-content/50">{t('exercise_max_duration', 'Maks. Süre')}</p>
                                     <p className="text-xl font-bold text-primary">{stats.maxDuration} dk</p>
-                                </div>
-                            </motion.div>
-                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-                                <div className="card-body p-3 text-center">
-                                    <p className="text-xs text-base-content/50">{t('exercise_total_duration', 'Toplam Süre')}</p>
-                                    <p className="text-xl font-bold text-secondary">{stats.totalDuration} dk</p>
-                                </div>
-                            </motion.div>
-                            <motion.div className="card bg-base-200 rounded-xl" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                                <div className="card-body p-3 text-center">
-                                    <p className="text-xs text-base-content/50">{t('exercise_session_count', 'Seans')}</p>
-                                    <p className="text-xl font-bold text-accent">{stats.sessionCount}</p>
                                 </div>
                             </motion.div>
                         </div>
@@ -273,7 +234,7 @@ export default function ExerciseProgress() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h4v4H3v-4zm14 0h4v4h-4v-4zM7 11h10v2H7v-2zM4 6h2v12H4V6zm14 0h2v12h-2V6z" />
                         </svg>
-                        <p className="text-sm font-medium">{t('exercise_no_data')}</p>
+                        <p className="text-sm font-medium">{t('exercise_min_records', 'Grafiğin çizilmesi için en az 2 kayıt gereklidir.')}</p>
                     </div>
                 </div>
             )}
