@@ -8,7 +8,7 @@ export function useTranslation() {
 
     const t = useMemo(() => {
         // Fallback to Turkish if translation is missing in the target language
-        return (key) => translations[lang]?.[key] || translations['tr'][key] || key;
+        return (key, fallback) => translations[lang]?.[key] || translations['tr']?.[key] || fallback || key;
     }, [lang]);
 
     return { t, lang };
