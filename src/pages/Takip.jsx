@@ -4,16 +4,18 @@ import KiloTakip from '../components/KiloTakip';
 import BedenOlculeri from '../components/BedenOlculeri';
 import GymTakip from '../components/GymTakip';
 import FotoTakip from '../components/FotoTakip';
-
-const tabs = [
-    { key: 'kilo', label: 'Kilo' },
-    { key: 'beden', label: 'Beden Ölçüleri' },
-    { key: 'gym', label: 'Gym' },
-    { key: 'foto', label: 'Fotoğraflar' },
-];
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Takip() {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('kilo');
+
+    const tabs = [
+        { key: 'kilo', label: t('takip_tab_kilo') },
+        { key: 'beden', label: t('takip_tab_beden') },
+        { key: 'gym', label: t('takip_tab_gym') },
+        { key: 'foto', label: t('takip_tab_foto') },
+    ];
 
     const components = {
         kilo: KiloTakip,
@@ -27,8 +29,8 @@ export default function Takip() {
     return (
         <div>
             <div className="mb-6">
-                <h2 className="text-2xl font-bold">Takip</h2>
-                <p className="text-sm text-base-content/50 mt-1">İlerlemenizi kaydedin ve grafiklerle takip edin</p>
+                <h2 className="text-2xl font-bold">{t('takip_title')}</h2>
+                <p className="text-sm text-base-content/50 mt-1">{t('takip_desc')}</p>
             </div>
 
             {/* Tabs */}

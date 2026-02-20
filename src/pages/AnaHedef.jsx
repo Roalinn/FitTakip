@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function AnaHedef() {
     const { state, dispatch } = useStore();
     const { goal, weightLog } = state;
+    const { t } = useTranslation();
 
     const [editing, setEditing] = useState(false);
     const [form, setForm] = useState({
@@ -43,12 +45,12 @@ export default function AnaHedef() {
     let bmiCategory = '';
     let bmiColorText = 'text-primary';
     if (bmi) {
-        if (bmi < 18.5) { bmiCategory = 'Zayıf'; bmiColorText = 'text-info'; }
-        else if (bmi < 25) { bmiCategory = 'Normal Kilolu'; bmiColorText = 'text-success'; }
-        else if (bmi < 30) { bmiCategory = 'Fazla Kilolu'; bmiColorText = 'text-warning'; }
-        else if (bmi < 35) { bmiCategory = 'Obezite (1. Derece)'; bmiColorText = 'text-error'; }
-        else if (bmi < 40) { bmiCategory = 'Obezite (2. Derece)'; bmiColorText = 'text-error'; }
-        else { bmiCategory = 'Aşırı Obezite (3. Derece)'; bmiColorText = 'text-error'; }
+        if (bmi < 18.5) { bmiCategory = t('anahedef_bmi_under'); bmiColorText = 'text-info'; }
+        else if (bmi < 25) { bmiCategory = t('anahedef_bmi_normal'); bmiColorText = 'text-success'; }
+        else if (bmi < 30) { bmiCategory = t('anahedef_bmi_over'); bmiColorText = 'text-warning'; }
+        else if (bmi < 35) { bmiCategory = t('anahedef_bmi_obese1'); bmiColorText = 'text-error'; }
+        else if (bmi < 40) { bmiCategory = t('anahedef_bmi_obese2'); bmiColorText = 'text-error'; }
+        else { bmiCategory = t('anahedef_bmi_obese3'); bmiColorText = 'text-error'; }
     }
 
     const idealWeightMin = heightM ? (18.5 * heightM * heightM).toFixed(1) : null;
@@ -78,8 +80,8 @@ export default function AnaHedef() {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-2xl font-bold">Ana Hedef</h2>
-                    <p className="text-sm text-base-content/50 mt-1">Hedefini belirle, ilerlemeni takip et</p>
+                    <h2 className="text-2xl font-bold">{t('anahedef_title')}</h2>
+                    <p className="text-sm text-base-content/50 mt-1">{t('anahedef_desc')}</p>
                 </div>
                 <button
                     className="btn btn-primary btn-sm rounded-xl"
@@ -95,7 +97,7 @@ export default function AnaHedef() {
                         setEditing(true);
                     }}
                 >
-                    {hasGoal ? 'Düzenle' : 'Hedef Belirle'}
+                    {hasGoal ? t('anahedef_btn_edit') : t('anahedef_btn_set')}
                 </button>
             </div>
 
@@ -108,14 +110,14 @@ export default function AnaHedef() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <h3 className="font-bold text-lg mb-4">Profil ve Hedef Ayarla</h3>
+                        <h3 className="font-bold text-lg mb-4">{t('modal_profile_title')}</h3>
 
                         <div className="grid grid-cols-2 gap-4">
                             {/* Kişisel Bilgiler */}
                             <div className="col-span-2 md:col-span-1 space-y-4">
-                                <h4 className="font-semibold text-sm text-base-content/60 uppercase tracking-widest border-b border-base-300 pb-1">Kişisel Bilgiler</h4>
+                                <h4 className="font-semibold text-sm text-base-content/60 uppercase tracking-widest border-b border-base-300 pb-1">{t('modal_profile_personal')}</h4>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Boy (cm)</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_height')}</span></label>
                                     <input
                                         type="number"
                                         className="input input-bordered rounded-xl w-full"
@@ -125,7 +127,7 @@ export default function AnaHedef() {
                                     />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Yaş</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_age')}</span></label>
                                     <input
                                         type="number"
                                         className="input input-bordered rounded-xl w-full"
@@ -135,23 +137,23 @@ export default function AnaHedef() {
                                     />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Cinsiyet</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_gender')}</span></label>
                                     <select
                                         className="select select-bordered rounded-xl w-full"
                                         value={form.gender}
                                         onChange={(e) => setForm({ ...form, gender: e.target.value })}
                                     >
-                                        <option value="erkek">Erkek</option>
-                                        <option value="kadin">Kadın</option>
+                                        <option value="erkek">{t('modal_profile_male')}</option>
+                                        <option value="kadin">{t('modal_profile_female')}</option>
                                     </select>
                                 </div>
                             </div>
 
                             {/* Hedef Bilgileri */}
                             <div className="col-span-2 md:col-span-1 space-y-4">
-                                <h4 className="font-semibold text-sm text-base-content/60 uppercase tracking-widest border-b border-base-300 pb-1">Kilo ve Hedef</h4>
+                                <h4 className="font-semibold text-sm text-base-content/60 uppercase tracking-widest border-b border-base-300 pb-1">{t('modal_profile_goalinfo')}</h4>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Başlangıç Kilosu (kg)</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_start_weight')}</span></label>
                                     <input
                                         type="number"
                                         step="0.1"
@@ -162,7 +164,7 @@ export default function AnaHedef() {
                                     />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Hedef Kilo (kg)</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_target_weight')}</span></label>
                                     <input
                                         type="number"
                                         step="0.1"
@@ -173,7 +175,7 @@ export default function AnaHedef() {
                                     />
                                 </div>
                                 <div className="form-control">
-                                    <label className="label"><span className="label-text">Hedef Tarih</span></label>
+                                    <label className="label"><span className="label-text">{t('modal_profile_target_date')}</span></label>
                                     <input
                                         type="date"
                                         className="input input-bordered rounded-xl w-full"
@@ -185,8 +187,8 @@ export default function AnaHedef() {
                         </div>
 
                         <div className="modal-action mt-6">
-                            <button className="btn btn-ghost rounded-xl" onClick={() => setEditing(false)}>İptal</button>
-                            <button className="btn btn-primary rounded-xl" onClick={handleSave}>Kaydet</button>
+                            <button className="btn btn-ghost rounded-xl" onClick={() => setEditing(false)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-primary rounded-xl" onClick={handleSave}>{t('modal_btn_save')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setEditing(false)} />
@@ -204,7 +206,7 @@ export default function AnaHedef() {
                             transition={{ delay: 0.05 }}
                         >
                             <div className="card-body p-4">
-                                <p className="text-xs text-base-content/50 uppercase tracking-wide">Güncel Kilo</p>
+                                <p className="text-xs text-base-content/50 uppercase tracking-wide">{t('anahedef_current')}</p>
                                 <p className="text-2xl font-bold text-primary">{currentWeight ? `${currentWeight} kg` : '—'}</p>
                             </div>
                         </motion.div>
@@ -216,7 +218,7 @@ export default function AnaHedef() {
                             transition={{ delay: 0.1 }}
                         >
                             <div className="card-body p-4">
-                                <p className="text-xs text-base-content/50 uppercase tracking-wide">Hedef Kilo</p>
+                                <p className="text-xs text-base-content/50 uppercase tracking-wide">{t('anahedef_target')}</p>
                                 <p className="text-2xl font-bold">{targetW} kg</p>
                                 {targetDate && (
                                     <p className="text-xs text-base-content/40 mt-1">
@@ -233,7 +235,7 @@ export default function AnaHedef() {
                             transition={{ delay: 0.15 }}
                         >
                             <div className="card-body p-4">
-                                <p className="text-xs text-base-content/50 uppercase tracking-wide">Kalan Kilo</p>
+                                <p className="text-xs text-base-content/50 uppercase tracking-wide">{t('anahedef_remaining_kg')}</p>
                                 <p className="text-2xl font-bold text-warning">{remaining > 0 ? `${remaining.toFixed(1)} kg` : '✓'}</p>
                             </div>
                         </motion.div>
@@ -245,25 +247,11 @@ export default function AnaHedef() {
                             transition={{ delay: 0.2 }}
                         >
                             <div className="card-body p-4">
-                                <p className="text-xs text-base-content/50 uppercase tracking-wide">Kalan Gün</p>
+                                <p className="text-xs text-base-content/50 uppercase tracking-wide">{t('anahedef_remaining_days')}</p>
                                 <p className="text-2xl font-bold text-info">{daysRemaining !== null ? `${daysRemaining}` : '—'}</p>
                             </div>
                         </motion.div>
                     </div>
-
-                    {/* Weekly average info */}
-                    {weeklyAvg && (
-                        <motion.div
-                            className="rounded-xl bg-primary/5 border border-primary/10 px-5 py-3"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.25 }}
-                        >
-                            <p className="text-sm text-base-content/70">
-                                💡 Hedefe ulaşmak için haftalık ortalama <span className="font-bold text-primary">{weeklyAvg.toFixed(2)} kg</span> vermeniz gerekiyor.
-                            </p>
-                        </motion.div>
-                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Progress Bar */}
@@ -275,7 +263,7 @@ export default function AnaHedef() {
                         >
                             <div className="card-body p-5">
                                 <div className="flex items-center justify-between mb-3">
-                                    <p className="text-sm font-medium">Hedef İlerlemesi</p>
+                                    <p className="text-sm font-medium">{t('anahedef_progress')}</p>
                                     <span className="text-sm font-bold text-primary">{progress.toFixed(1)}%</span>
                                 </div>
                                 <progress
@@ -306,11 +294,11 @@ export default function AnaHedef() {
                                         <span className="text-lg font-bold text-base-content">{bmi.toFixed(1)}</span>
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium mb-1">Vücut Kitle İndeksi (VKİ)</p>
+                                        <p className="text-sm font-medium mb-1">{t('anahedef_bmi_title')}</p>
                                         <p className={`text-lg font-bold ${bmiColorText}`}>{bmiCategory}</p>
 
                                         <div className="mt-2 pt-2 border-t border-base-300">
-                                            <p className="text-xs text-base-content/50">İdeal Kilo Aralığınız:</p>
+                                            <p className="text-xs text-base-content/50">{t('anahedef_bmi_ideal')}</p>
                                             <p className="text-sm font-medium text-base-content">{idealWeightMin} kg - {idealWeightMax} kg</p>
                                         </div>
                                     </div>
@@ -318,6 +306,20 @@ export default function AnaHedef() {
                             </motion.div>
                         )}
                     </div>
+
+                    {/* Weekly average info (moved to bottom) */}
+                    {weeklyAvg && (
+                        <motion.div
+                            className="rounded-xl bg-primary/5 border border-primary/10 px-5 py-3"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <p className="text-sm text-base-content/70">
+                                {t('anahedef_weekly_avg_1')} <span className="font-bold text-primary">{weeklyAvg.toFixed(2)} kg</span> {t('anahedef_weekly_avg_2')}
+                            </p>
+                        </motion.div>
+                    )}
                 </div>
             ) : (
                 <motion.div
@@ -329,8 +331,8 @@ export default function AnaHedef() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <p className="text-base-content/50">Henüz bir profil oluşturmadınız.</p>
-                        <p className="text-sm text-base-content/30">Yukarıdaki butona tıklayarak bilgilerinizi girebilirsiniz.</p>
+                        <p className="text-base-content/50">{t('anahedef_no_goal')}</p>
+                        <p className="text-sm text-base-content/30">{t('anahedef_no_goal_desc')}</p>
                     </div>
                 </motion.div>
             )}

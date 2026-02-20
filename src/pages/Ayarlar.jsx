@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useTranslation } from '../hooks/useTranslation';
 
 const LANGUAGES = [
     { key: 'tr', label: 'Türkçe' },
     { key: 'en', label: 'English' },
-    { key: 'de', label: 'Deutsch' },
-    { key: 'fr', label: 'Français' },
-    { key: 'es', label: 'Español' },
 ];
 
 export default function Ayarlar() {
     const { state, dispatch } = useStore();
     const { settings } = state;
+    const { t } = useTranslation();
     const [showReset, setShowReset] = useState(false);
 
     const toggleTheme = () => {
@@ -28,11 +27,43 @@ export default function Ayarlar() {
         setShowReset(false);
     };
 
+    const handleExport = () => {
+        const data = JSON.stringify(state, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `fittakip_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImport = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                dispatch({ type: 'IMPORT_DATA', payload: parsed });
+                e.target.value = null;
+                alert(t('settings_import_success'));
+            } catch (error) {
+                console.error('Import error:', error);
+                alert(t('settings_import_error'));
+            }
+        };
+        reader.readAsText(file);
+    };
+
     return (
         <div>
             <div className="mb-6">
-                <h2 className="text-2xl font-bold">Ayarlar</h2>
-                <p className="text-sm text-base-content/50 mt-1">Uygulama tercihlerini yönetin</p>
+                <h2 className="text-2xl font-bold">{t('settings_title')}</h2>
+                <p className="text-sm text-base-content/50 mt-1">{t('settings_desc')}</p>
             </div>
 
             <div className="space-y-4 max-w-md">
@@ -46,8 +77,8 @@ export default function Ayarlar() {
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-sm">Tema</h3>
-                                <p className="text-xs text-base-content/40">{settings.theme === 'dark' ? 'Koyu tema aktif' : 'Açık tema aktif'}</p>
+                                <h3 className="font-semibold text-sm">{t('settings_theme')}</h3>
+                                <p className="text-xs text-base-content/40">{settings.theme === 'dark' ? t('settings_theme_dark') : t('settings_theme_light')}</p>
                             </div>
                             <label className="swap swap-rotate">
                                 <input
@@ -76,8 +107,8 @@ export default function Ayarlar() {
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-sm">Dil</h3>
-                                <p className="text-xs text-base-content/40">Arayüz dili</p>
+                                <h3 className="font-semibold text-sm">{t('settings_lang')}</h3>
+                                <p className="text-xs text-base-content/40">{t('settings_lang_desc')}</p>
                             </div>
                             <select
                                 className="select select-bordered select-sm rounded-xl w-36"
@@ -92,24 +123,58 @@ export default function Ayarlar() {
                     </div>
                 </motion.div>
 
-                {/* Reset */}
+                {/* Export & Import */}
                 <motion.div
                     className="card bg-base-200 rounded-xl"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
                 >
+                    <div className="card-body p-4 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-semibold text-sm">{t('settings_data')}</h3>
+                                <p className="text-xs text-base-content/40">{t('settings_data_desc')}</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <button
+                                className="btn btn-outline btn-sm rounded-xl flex-1"
+                                onClick={handleExport}
+                            >
+                                {t('settings_export')}
+                            </button>
+                            <label className="btn btn-outline btn-sm rounded-xl flex-1 cursor-pointer">
+                                {t('settings_import')}
+                                <input
+                                    type="file"
+                                    accept=".json"
+                                    className="hidden"
+                                    onChange={handleImport}
+                                />
+                            </label>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Reset */}
+                <motion.div
+                    className="card bg-base-200 rounded-xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
                     <div className="card-body p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-semibold text-sm">Verileri Sıfırla</h3>
-                                <p className="text-xs text-base-content/40">Tüm veriler kalıcı olarak silinir</p>
+                                <h3 className="font-semibold text-sm">{t('settings_reset')}</h3>
+                                <p className="text-xs text-base-content/40">{t('settings_reset_desc')}</p>
                             </div>
                             <button
                                 className="btn btn-error btn-sm rounded-xl"
                                 onClick={() => setShowReset(true)}
                             >
-                                Sıfırla
+                                {t('settings_btn_reset')}
                             </button>
                         </div>
                     </div>
@@ -125,13 +190,13 @@ export default function Ayarlar() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <h3 className="font-bold text-lg mb-2">Emin misiniz?</h3>
+                        <h3 className="font-bold text-lg mb-2">{t('settings_confirm_title')}</h3>
                         <p className="text-sm text-base-content/60">
-                            Tüm uygulama verileri kalıcı olarak silinecektir. Bu işlem geri alınamaz.
+                            {t('settings_confirm_desc')}
                         </p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setShowReset(false)}>İptal</button>
-                            <button className="btn btn-error btn-sm rounded-xl" onClick={handleReset}>Sıfırla</button>
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setShowReset(false)}>{t('modal_btn_cancel')}</button>
+                            <button className="btn btn-error btn-sm rounded-xl" onClick={handleReset}>{t('settings_btn_reset')}</button>
                         </div>
                     </motion.div>
                     <div className="modal-backdrop" onClick={() => setShowReset(false)} />

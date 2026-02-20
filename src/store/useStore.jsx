@@ -48,6 +48,8 @@ function reducer(state, action) {
             return { ...state, settings: { ...state.settings, ...action.payload } };
         case 'RESET_ALL':
             return { ...defaultState, settings: state.settings };
+        case 'IMPORT_DATA':
+            return { ...defaultState, ...action.payload, settings: { ...state.settings, ...(action.payload.settings || {}) } };
 
         case 'SET_GOAL':
             return { ...state, goal: { ...state.goal, ...action.payload } };
