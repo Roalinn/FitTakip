@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import {
@@ -14,12 +14,21 @@ const MEASUREMENTS = [
     { key: 'shoulder', label: 'Omuz', color: 'oklch(0.7 0.2 200)' },
 ];
 
+const TIME_FILTERS = [
+    { key: 'week', label: 'Son Hafta', days: 7 },
+    { key: 'month', label: 'Son Ay', days: 30 },
+    { key: '6months', label: 'Son 6 Ay', days: 180 },
+    { key: 'year', label: 'Son Yıl', days: 365 },
+    { key: 'all', label: 'Tümü', days: null },
+];
+
 export default function BedenOlculeri() {
     const { state, dispatch } = useStore();
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
-    const [filter, setFilter] = useState('all');
+    const [measureFilter, setMeasureFilter] = useState('all');
+    const [timeFilter, setTimeFilter] = useState('all');
     const [form, setForm] = useState({
         date: '',
         chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '',
@@ -64,14 +73,23 @@ export default function BedenOlculeri() {
         }
     };
 
-    const chartData = state.bodyMeasurements.map((entry) => ({
+    // Time-filtered data
+    const timeFilteredData = useMemo(() => {
+        const tf = TIME_FILTERS.find((f) => f.key === timeFilter);
+        if (!tf || !tf.days) return state.bodyMeasurements;
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - tf.days);
+        return state.bodyMeasurements.filter((e) => new Date(e.date) >= cutoff);
+    }, [state.bodyMeasurements, timeFilter]);
+
+    const chartData = timeFilteredData.map((entry) => ({
         date: new Date(entry.date).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }),
         ...entry,
     }));
 
-    const visibleMeasurements = filter === 'all'
+    const visibleMeasurements = measureFilter === 'all'
         ? MEASUREMENTS
-        : MEASUREMENTS.filter((m) => m.key === filter);
+        : MEASUREMENTS.filter((m) => m.key === measureFilter);
 
     return (
         <div className="space-y-6">
@@ -83,76 +101,91 @@ export default function BedenOlculeri() {
                 </button>
             </div>
 
-            {/* Filter & Chart */}
-            {chartData.length > 1 && (
-                <motion.div
-                    className="card bg-base-200 rounded-xl"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="card-body p-4">
-                        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 className="font-semibold">Ölçü Grafiği</h3>
-                        </div>
-                        {/* Filter buttons */}
-                        <div className="flex flex-wrap gap-1 mb-4">
-                            <button
-                                className={`btn btn-xs rounded-lg ${filter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                onClick={() => setFilter('all')}
-                            >
-                                Tümü
-                            </button>
-                            {MEASUREMENTS.map((m) => (
-                                <button
-                                    key={m.key}
-                                    className={`btn btn-xs rounded-lg ${filter === m.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                    onClick={() => setFilter(m.key)}
-                                >
-                                    {m.label}
-                                </button>
-                            ))}
-                        </div>
-                        <div className="h-72">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis
-                                        dataKey="date"
-                                        tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                    />
-                                    <YAxis
-                                        tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                        unit=" cm"
-                                    />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'oklch(0.25 0.01 260)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px',
-                                            color: '#fff',
-                                        }}
-                                    />
-                                    <Legend />
-                                    {visibleMeasurements.map((m) => (
-                                        <Line
-                                            key={m.key}
-                                            type="monotone"
-                                            dataKey={m.key}
-                                            name={m.label}
-                                            stroke={m.color}
-                                            strokeWidth={2}
-                                            dot={{ r: 3 }}
-                                            connectNulls
-                                        />
-                                    ))}
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
+            {/* Chart - always visible */}
+            <motion.div
+                className="card bg-base-200 rounded-xl"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <div className="card-body p-4">
+                    <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <h3 className="font-semibold">Ölçü Grafiği</h3>
                     </div>
-                </motion.div>
-            )}
+                    {/* Time filter buttons */}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                        {TIME_FILTERS.map((f) => (
+                            <button
+                                key={f.key}
+                                className={`btn btn-xs rounded-lg ${timeFilter === f.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                onClick={() => setTimeFilter(f.key)}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
+                    </div>
+                    {/* Measurement filter buttons */}
+                    <div className="flex flex-wrap gap-1 mb-3">
+                        <button
+                            className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                            onClick={() => setMeasureFilter('all')}
+                        >
+                            Tümü
+                        </button>
+                        {MEASUREMENTS.map((m) => (
+                            <button
+                                key={m.key}
+                                className={`btn btn-xs rounded-lg ${measureFilter === m.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                onClick={() => setMeasureFilter(m.key)}
+                            >
+                                {m.label}
+                            </button>
+                        ))}
+                    </div>
+                    {chartData.length < 2 && (
+                        <p className="text-xs text-base-content/40 mb-2">
+                            Grafiğin çizilmesi için en az 2 ölçüm kaydı gereklidir.
+                        </p>
+                    )}
+                    <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                                <XAxis
+                                    dataKey="date"
+                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                />
+                                <YAxis
+                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                    unit=" cm"
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'oklch(0.25 0.01 260)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        color: '#fff',
+                                    }}
+                                />
+                                <Legend />
+                                {visibleMeasurements.map((m) => (
+                                    <Line
+                                        key={m.key}
+                                        type="monotone"
+                                        dataKey={m.key}
+                                        name={m.label}
+                                        stroke={m.color}
+                                        strokeWidth={2}
+                                        dot={{ r: 3 }}
+                                        connectNulls
+                                    />
+                                ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </motion.div>
 
             {/* List */}
             {state.bodyMeasurements.length > 0 ? (

@@ -15,6 +15,7 @@ const FILTERS = [
 
 export default function KiloTakip() {
     const { state, dispatch } = useStore();
+    const [showAddModal, setShowAddModal] = useState(false);
     const [form, setForm] = useState({ date: '', weight: '' });
     const [chartFilter, setChartFilter] = useState('all');
     const [editIndex, setEditIndex] = useState(null);
@@ -28,6 +29,7 @@ export default function KiloTakip() {
             payload: { date: form.date, weight: parseFloat(form.weight) },
         });
         setForm({ date: '', weight: '' });
+        setShowAddModal(false);
     };
 
     const openEdit = (index) => {
@@ -68,90 +70,77 @@ export default function KiloTakip() {
 
     return (
         <div className="space-y-6">
-            {/* Add form */}
-            <div className="card bg-base-200 rounded-xl">
-                <div className="card-body p-4">
-                    <h3 className="font-semibold mb-3">Kilo Ekle</h3>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <input
-                            type="date"
-                            className="input input-bordered rounded-xl flex-1"
-                            value={form.date}
-                            onChange={(e) => setForm({ ...form, date: e.target.value })}
-                        />
-                        <input
-                            type="number"
-                            step="0.1"
-                            className="input input-bordered rounded-xl w-full sm:w-32"
-                            value={form.weight}
-                            onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                            placeholder="kg"
-                        />
-                        <button className="btn btn-primary rounded-xl" onClick={handleAdd}>Ekle</button>
-                    </div>
-                </div>
+            {/* Header with add button */}
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Kilo Takip</h3>
+                <button className="btn btn-primary btn-sm rounded-xl" onClick={() => setShowAddModal(true)}>
+                    + Kilo Ekle
+                </button>
             </div>
 
-            {/* Chart */}
-            {chartData.length > 1 && (
-                <motion.div
-                    className="card bg-base-200 rounded-xl"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="card-body p-4">
-                        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h3 className="font-semibold">Kilo Grafiği</h3>
-                            <div className="flex flex-wrap gap-1">
-                                {FILTERS.map((f) => (
-                                    <button
-                                        key={f.key}
-                                        className={`btn btn-xs rounded-lg ${chartFilter === f.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                        onClick={() => setChartFilter(f.key)}
-                                    >
-                                        {f.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis
-                                        dataKey="date"
-                                        tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                    />
-                                    <YAxis
-                                        domain={['auto', 'auto']}
-                                        tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                        unit=" kg"
-                                    />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'oklch(0.25 0.01 260)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px',
-                                            color: '#fff',
-                                        }}
-                                        formatter={(value) => [`${value} kg`, 'Kilo']}
-                                    />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="kg"
-                                        stroke="oklch(0.65 0.24 265)"
-                                        strokeWidth={2}
-                                        dot={{ fill: 'oklch(0.65 0.24 265)', r: 4 }}
-                                        activeDot={{ r: 6 }}
-                                    />
-                                </LineChart>
-                            </ResponsiveContainer>
+            {/* Chart - always visible */}
+            <motion.div
+                className="card bg-base-200 rounded-xl"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <div className="card-body p-4">
+                    <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                        <h3 className="font-semibold">Kilo Grafiği</h3>
+                        <div className="flex flex-wrap gap-1">
+                            {FILTERS.map((f) => (
+                                <button
+                                    key={f.key}
+                                    className={`btn btn-xs rounded-lg ${chartFilter === f.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                    onClick={() => setChartFilter(f.key)}
+                                >
+                                    {f.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
-                </motion.div>
-            )}
+                    {chartData.length < 2 && (
+                        <p className="text-xs text-base-content/40 mb-2">
+                            Grafiğin çizilmesi için en az 2 kilo kaydı gereklidir.
+                        </p>
+                    )}
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                                <XAxis
+                                    dataKey="date"
+                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                />
+                                <YAxis
+                                    domain={['auto', 'auto']}
+                                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                                    unit=" kg"
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'oklch(0.25 0.01 260)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        color: '#fff',
+                                    }}
+                                    formatter={(value) => [`${value} kg`, 'Kilo']}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="kg"
+                                    stroke="oklch(0.65 0.24 265)"
+                                    strokeWidth={2}
+                                    dot={{ fill: 'oklch(0.65 0.24 265)', r: 4 }}
+                                    activeDot={{ r: 6 }}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </motion.div>
 
             {/* List */}
             {state.weightLog.length > 0 ? (
@@ -201,6 +190,47 @@ export default function KiloTakip() {
                     <div className="card-body items-center text-center py-12">
                         <p className="text-base-content/50">Henüz kilo kaydı eklenmemiş.</p>
                     </div>
+                </div>
+            )}
+
+            {/* Add Modal (popup) */}
+            {showAddModal && (
+                <div className="modal modal-open">
+                    <motion.div
+                        className="modal-box rounded-2xl max-w-sm"
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <h3 className="font-bold text-lg mb-4">Kilo Ekle</h3>
+                        <div className="space-y-4">
+                            <div className="form-control">
+                                <label className="label"><span className="label-text">Tarih</span></label>
+                                <input
+                                    type="date"
+                                    className="input input-bordered rounded-xl w-full"
+                                    value={form.date}
+                                    onChange={(e) => setForm({ ...form, date: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-control">
+                                <label className="label"><span className="label-text">Kilo (kg)</span></label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    className="input input-bordered rounded-xl w-full"
+                                    value={form.weight}
+                                    onChange={(e) => setForm({ ...form, weight: e.target.value })}
+                                    placeholder="85.0"
+                                />
+                            </div>
+                        </div>
+                        <div className="modal-action">
+                            <button className="btn btn-ghost btn-sm rounded-xl" onClick={() => setShowAddModal(false)}>İptal</button>
+                            <button className="btn btn-primary btn-sm rounded-xl" onClick={handleAdd}>Ekle</button>
+                        </div>
+                    </motion.div>
+                    <div className="modal-backdrop" onClick={() => setShowAddModal(false)} />
                 </div>
             )}
 

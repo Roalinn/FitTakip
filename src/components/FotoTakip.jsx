@@ -92,6 +92,9 @@ export default function FotoTakip() {
                                                 <p className="text-xs text-white/80">
                                                     {new Date(photo.date).toLocaleDateString('tr-TR')}
                                                 </p>
+                                                {photo.note && (
+                                                    <p className="text-xs text-white/60 truncate mt-0.5">{photo.note}</p>
+                                                )}
                                             </div>
                                             <button
                                                 className="absolute top-2 right-2 btn btn-circle btn-xs bg-black/50 border-0 text-white opacity-0 group-hover:opacity-100 transition-opacity"
