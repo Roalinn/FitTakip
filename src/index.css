@@ -6,6 +6,15 @@
 
 :root {
   font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: light dark;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {

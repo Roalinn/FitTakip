@@ -210,7 +210,7 @@ export default function GymTakip() {
                                 <button
                                     key={day}
                                     className={`
-                    aspect-square rounded-xl text-sm font-medium transition-all duration-150
+                    py-2 rounded-xl text-sm font-medium transition-all duration-150
                     flex items-center justify-center relative
                     ${isSelected
                                             ? 'bg-primary text-primary-content shadow-md shadow-primary/20'

@@ -3,13 +3,6 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
 
-// Generate half-hour time slots
-const TIME_SLOTS = [];
-for (let h = 0; h < 24; h++) {
-    const hh = String(h).padStart(2, '0');
-    TIME_SLOTS.push(`${hh}:00`);
-    TIME_SLOTS.push(`${hh}:30`);
-}
 
 export default function DiyetProgrami() {
     const { state, dispatch } = useStore();
@@ -18,7 +11,7 @@ export default function DiyetProgrami() {
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
-    const [form, setForm] = useState({ name: '', time: '', foods: '', note: '' });
+    const [form, setForm] = useState({ name: '', time: '08:00', foods: '', note: '' });
 
     const DAYS_CONFIG = [
         { key: 'pazartesi', label: t('day_short_pzt', 'Pzt'), full: t('day_full_pzt', 'Pazartesi') },
@@ -35,7 +28,7 @@ export default function DiyetProgrami() {
 
     const openAdd = () => {
         setEditIndex(null);
-        setForm({ name: '', time: '', foods: '', note: '' });
+        setForm({ name: '', time: '08:00', foods: '', note: '' });
         setShowModal(true);
     };
 
@@ -44,7 +37,7 @@ export default function DiyetProgrami() {
         setEditIndex(index);
         setForm({
             name: meal.name,
-            time: meal.time || '',
+            time: meal.time || '08:00',
             foods: meal.foods.join(', '),
             note: meal.note || '',
         });
@@ -188,16 +181,57 @@ export default function DiyetProgrami() {
                             </div>
                             <div className="form-control">
                                 <label className="label"><span className="label-text">{t('diet_time', 'Saat')}</span></label>
-                                <select
-                                    className="select select-bordered rounded-xl w-full"
-                                    value={form.time}
-                                    onChange={(e) => setForm({ ...form, time: e.target.value })}
-                                >
-                                    <option value="">{t('diet_time_ph', 'Saat seçin')}</option>
-                                    {TIME_SLOTS.map((t) => (
-                                        <option key={t} value={t}>{t}</option>
-                                    ))}
-                                </select>
+                                <div className="flex gap-2 isolate pt-1">
+                                    {/* Saat */}
+                                    <div className="flex-1 flex flex-col items-center bg-base-200 p-2 rounded-xl">
+                                        <button
+                                            className="btn btn-ghost btn-xs btn-circle"
+                                            onClick={() => {
+                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
+                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
+                                                h = (h + 1) % 24;
+                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
+                                            }}
+                                        >▲</button>
+                                        <div className="text-xl font-bold my-1">
+                                            {form.time ? form.time.split(':')[0] : '08'}
+                                        </div>
+                                        <button
+                                            className="btn btn-ghost btn-xs btn-circle"
+                                            onClick={() => {
+                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
+                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
+                                                h = h === 0 ? 23 : h - 1;
+                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
+                                            }}
+                                        >▼</button>
+                                    </div>
+                                    <div className="flex items-center text-xl font-bold pb-1 text-base-content/50">:</div>
+                                    {/* Dakika */}
+                                    <div className="flex-1 flex flex-col items-center bg-base-200 p-2 rounded-xl">
+                                        <button
+                                            className="btn btn-ghost btn-xs btn-circle"
+                                            onClick={() => {
+                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
+                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
+                                                m = (m + 15) % 60;
+                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
+                                            }}
+                                        >▲</button>
+                                        <div className="text-xl font-bold my-1">
+                                            {form.time ? form.time.split(':')[1] : '00'}
+                                        </div>
+                                        <button
+                                            className="btn btn-ghost btn-xs btn-circle"
+                                            onClick={() => {
+                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
+                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
+                                                m = m === 0 ? 45 : m - 15;
+                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
+                                            }}
+                                        >▼</button>
+                                    </div>
+                                </div>
                             </div>
                             <div className="form-control">
                                 <label className="label"><span className="label-text">{t('diet_foods', 'Besinler (virgülle ayırın)')}</span></label>
