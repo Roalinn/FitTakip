@@ -25,48 +25,6 @@ const pageTransition = {
 export default function App() {
     const [activePage, setActivePage] = useState('anaHedef');
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [exitToast, setExitToast] = useState(false);
-    const exitToastRef = useRef(false);
-    const exitTimerRef = useRef(null);
-
-    useEffect(() => {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-        if (!isMobile) return;
-
-        // Ensure history has a safe baseline to trap back events without causing blank screens
-        if (!window.history.state || window.history.state.page !== 'app') {
-            window.history.replaceState({ page: 'base' }, '');
-            window.history.pushState({ page: 'app' }, '');
-        }
-
-        const handlePopState = (e) => {
-            // Only trap the popstate if the user reached our 'base' dummy history.
-            // If returning from modals, the state will be 'app' or something else, harmless.
-            if (e.state && e.state.page === 'base') {
-                if (exitToastRef.current) {
-                    // User confirmed exit with double back
-                    window.history.back();
-                    return;
-                }
-
-                // First back press: Warn and prevent
-                exitToastRef.current = true;
-                setExitToast(true);
-
-                // Immediately push state forward to trap again!
-                window.history.pushState({ page: 'app' }, '');
-
-                if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-                exitTimerRef.current = setTimeout(() => {
-                    exitToastRef.current = false;
-                    setExitToast(false);
-                }, 2000);
-            }
-        };
-
-        window.addEventListener('popstate', handlePopState);
-        return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
 
     // Swipe to open/close sidebar
     const [touchStart, setTouchStart] = useState(null);
@@ -161,14 +119,6 @@ export default function App() {
                     </AnimatePresence>
                 </div>
             </main>
-            {/* Double Back Exit Toast */}
-            {exitToast && (
-                <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 w-max pointer-events-none">
-                    <div className="alert py-2 px-6 shadow-xl border border-white/10 bg-base-300 text-base-content rounded-full text-sm font-medium">
-                        <span>{t('toast_double_back', 'Çıkmak için tekrar dokunun')}</span>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
