@@ -7,7 +7,7 @@ const STORAGE_KEY = 'fittakip_data';
 const defaultState = {
     settings: {
         theme: 'dark',
-        language: 'tr',
+        language: 'en',
     },
     goal: {
         startWeight: null,

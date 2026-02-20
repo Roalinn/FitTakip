@@ -4,8 +4,8 @@ import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
 
 const LANGUAGES = [
-    { key: 'tr', label: 'Türkçe' },
     { key: 'en', label: 'English' },
+    { key: 'tr', label: 'Türkçe' },
 ];
 
 export default function Ayarlar() {

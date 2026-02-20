@@ -165,7 +165,7 @@ export default function GymTakip() {
 
             {/* Calendar */}
             <motion.div
-                className="card bg-base-200 rounded-xl"
+                className="card bg-base-200 rounded-xl max-w-md mx-auto"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
             >
@@ -175,20 +175,8 @@ export default function GymTakip() {
                         <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={prevMonth}>
                             ◀
                         </button>
-                        <div className="relative flex items-center justify-center cursor-pointer hover:bg-base-300 rounded-xl px-4 py-1 transition-colors">
+                        <div className="flex items-center justify-center rounded-xl px-4 py-1">
                             <h3 className="font-semibold capitalize text-lg text-center">{monthLabel}</h3>
-                            <input
-                                type="month"
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                value={`${year}-${String(month + 1).padStart(2, '0')}`}
-                                onChange={(e) => {
-                                    const [y, m] = e.target.value.split('-');
-                                    if (y && m) {
-                                        setCurrentMonth({ year: parseInt(y), month: parseInt(m) - 1 });
-                                        setSelectedDate(null);
-                                    }
-                                }}
-                            />
                         </div>
                         <button className="btn btn-ghost btn-sm btn-square rounded-xl" onClick={nextMonth}>
                             ▶
@@ -222,7 +210,7 @@ export default function GymTakip() {
                                 <button
                                     key={day}
                                     className={`
-                    aspect-square rounded-xl text-sm font-medium transition-all duration-150
+                    aspect-square max-w-[2.5rem] w-full mx-auto rounded-xl text-sm font-medium transition-all duration-150
                     flex items-center justify-center relative
                     ${isSelected
                                             ? 'bg-primary text-primary-content shadow-md shadow-primary/20'

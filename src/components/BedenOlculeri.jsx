@@ -110,38 +110,40 @@ export default function BedenOlculeri() {
                 animate={{ opacity: 1, y: 0 }}
             >
                 <div className="card-body p-4">
-                    <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                        <h3 className="font-semibold">{t('beden_chart_title')}</h3>
-                    </div>
-                    {/* Time filter buttons */}
-                    <div className="flex flex-wrap gap-1 mb-2">
-                        {TIME_FILTERS.map((f) => (
-                            <button
-                                key={f.key}
-                                className={`btn btn-xs rounded-lg ${timeFilter === f.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                onClick={() => setTimeFilter(f.key)}
-                            >
-                                {f.label}
-                            </button>
-                        ))}
-                    </div>
-                    {/* Measurement filter buttons */}
-                    <div className="flex flex-wrap gap-1 mb-3">
-                        <button
-                            className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                            onClick={() => setMeasureFilter('all')}
-                        >
-                            {t('filter_all')}
-                        </button>
-                        {MEASUREMENTS.map((m) => (
-                            <button
-                                key={m.key}
-                                className={`btn btn-xs rounded-lg ${measureFilter === m.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
-                                onClick={() => setMeasureFilter(m.key)}
-                            >
-                                {m.label}
-                            </button>
-                        ))}
+                    <div className="flex items-start justify-between mb-3 flex-wrap gap-4">
+                        <h3 className="font-semibold mt-1">{t('beden_chart_title')}</h3>
+                        <div className="flex flex-col items-end gap-2">
+                            {/* Time filter buttons */}
+                            <div className="flex flex-wrap justify-end gap-1">
+                                {TIME_FILTERS.map((f) => (
+                                    <button
+                                        key={f.key}
+                                        className={`btn btn-xs rounded-lg ${timeFilter === f.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                        onClick={() => setTimeFilter(f.key)}
+                                    >
+                                        {f.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {/* Measurement filter buttons */}
+                            <div className="flex flex-wrap justify-end gap-1">
+                                <button
+                                    className={`btn btn-xs rounded-lg ${measureFilter === 'all' ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                    onClick={() => setMeasureFilter('all')}
+                                >
+                                    {t('filter_all')}
+                                </button>
+                                {MEASUREMENTS.map((m) => (
+                                    <button
+                                        key={m.key}
+                                        className={`btn btn-xs rounded-lg ${measureFilter === m.key ? 'btn-primary' : 'btn-ghost bg-base-300'}`}
+                                        onClick={() => setMeasureFilter(m.key)}
+                                    >
+                                        {m.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                     {chartData.length < 2 && (
                         <p className="text-xs text-base-content/40 mb-2">
