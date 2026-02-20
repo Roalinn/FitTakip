@@ -133,7 +133,16 @@ export default function ExerciseProgress() {
     });
 
     if (exerciseNames.length === 0) {
-        return null;
+        return (
+            <div className="card bg-base-200 rounded-xl mt-4">
+                <div className="card-body items-center text-center py-10 text-base-content/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h4v4H3v-4zm14 0h4v4h-4v-4zM7 11h10v2H7v-2zM4 6h2v12H4V6zm14 0h2v12h-2V6z" />
+                    </svg>
+                    <p className="text-sm font-medium">{t('exercise_prog_empty', 'Gym gelişimini görmek için henüz kaydedilmiş bir antrenmanınız bulunmuyor.')}</p>
+                </div>
+            </div>
+        );
     }
 
     return (

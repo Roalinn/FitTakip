@@ -16,6 +16,7 @@ export default function AnaHedef() {
         height: goal.height || '',
         age: goal.age || '',
         gender: goal.gender || 'erkek',
+        activityLevel: goal.activityLevel || '1.3',
     });
 
     const currentWeight = weightLog.length > 0
@@ -95,17 +96,33 @@ export default function AnaHedef() {
     }
 
     const handleSave = () => {
+        const payload = {
+            startWeight: parseFloat(form.startWeight) || null,
+            targetWeight: parseFloat(form.targetWeight) || null,
+            targetDate: form.targetDate || null,
+            height: parseFloat(form.height) || null,
+            age: parseInt(form.age) || null,
+            gender: form.gender,
+            activityLevel: parseFloat(form.activityLevel) || 1.3,
+        };
+
         dispatch({
             type: 'SET_GOAL',
-            payload: {
-                startWeight: parseFloat(form.startWeight) || null,
-                targetWeight: parseFloat(form.targetWeight) || null,
-                targetDate: form.targetDate || null,
-                height: parseFloat(form.height) || null,
-                age: parseInt(form.age) || null,
-                gender: form.gender,
-            },
+            payload,
         });
+
+        // Add to weight tracking if start weight changed or is being set
+        if (payload.startWeight && (!goal.startWeight || goal.startWeight !== payload.startWeight)) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const hasLogToday = weightLog.some(l => l.date === todayStr);
+            if (!hasLogToday) {
+                dispatch({
+                    type: 'ADD_WEIGHT_LOG',
+                    payload: { date: todayStr, weight: payload.startWeight, photo: null }
+                });
+            }
+        }
+
         setEditing(false);
     };
 
@@ -164,6 +181,7 @@ export default function AnaHedef() {
                             height: goal.height || '',
                             age: goal.age || '',
                             gender: goal.gender || 'erkek',
+                            activityLevel: goal.activityLevel || '1.3',
                         });
                         setEditing(true);
                     }}
@@ -216,6 +234,20 @@ export default function AnaHedef() {
                                     >
                                         <option value="erkek">{t('modal_profile_male')}</option>
                                         <option value="kadin">{t('modal_profile_female')}</option>
+                                    </select>
+                                </div>
+                                <div className="form-control">
+                                    <label className="label"><span className="label-text">{t('modal_profile_activity_level', 'Hareketlilik Seviyesi')}</span></label>
+                                    <select
+                                        className="select select-bordered rounded-xl w-full"
+                                        value={form.activityLevel}
+                                        onChange={(e) => setForm({ ...form, activityLevel: e.target.value })}
+                                    >
+                                        <option value="1.2">{t('activity_sedentary', 'Hareketsiz (Masa Başı)')}</option>
+                                        <option value="1.375">{t('activity_light', 'Az Hareketli (Hafif Antrenman)')}</option>
+                                        <option value="1.55">{t('activity_moderate', 'Orta Hareketli (Düzenli Antrenman)')}</option>
+                                        <option value="1.725">{t('activity_active', 'Çok Hareketli (Sık Antrenman)')}</option>
+                                        <option value="1.9">{t('activity_extra', 'Aşırı Hareketli (Fiziksel İş)')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -442,13 +474,13 @@ export default function AnaHedef() {
                                             </div>
                                             <div className="border-t border-base-300 pt-1">
                                                 <p className="text-sm font-medium text-base-content/70">{t('tdee_title', 'Günlük Kalori İhtiyacı')}</p>
-                                                <p className={`text-lg font-bold text-primary`}>{Math.round(bmr * 1.3)} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
+                                                <p className={`text-lg font-bold text-primary`}>{Math.round(bmr * (goal.activityLevel || 1.3))} <span className="text-xs font-normal text-base-content/60">kcal</span></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="pt-2 border-t border-base-300">
                                         <p className="text-xs text-base-content/50 leading-relaxed">
-                                            {t('bmr_disclaimer', '* Hareketlilik seviyesi ortalama kabul edilerek hesaplanmış tahmini değerlerdir.')}
+                                            {t('bmr_disclaimer', '* Girdiğiniz hareketlilik seviyesine göre hesaplanmış tahmini değerlerdir.')}
                                         </p>
                                     </div>
                                 </div>
