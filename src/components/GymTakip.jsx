@@ -20,7 +20,8 @@ export default function GymTakip() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [form, setForm] = useState({
         date: '',
-        exercises: [{ name: '', sets: '', reps: '', duration: '', weight: '' }],
+        logType: 'weight',
+        exercises: [{ name: '', sets: '', reps: '', weight: '' }],
     });
 
     // Build a map: dateString -> gymLog entries
@@ -72,9 +73,15 @@ export default function GymTakip() {
 
     // Form helpers
     const addExerciseRow = () => {
+        const isCardio = form.logType === 'cardio';
         setForm({
             ...form,
-            exercises: [...form.exercises, { name: '', sets: '', reps: '', duration: '', weight: '' }],
+            exercises: [
+                ...form.exercises,
+                isCardio
+                    ? { name: '', distance: '', duration: '', speed: '' }
+                    : { name: '', sets: '', reps: '', weight: '' }
+            ],
         });
     };
 
@@ -91,26 +98,35 @@ export default function GymTakip() {
         });
     };
 
-    const openAdd = () => {
+    const openAdd = (type = 'weight') => {
         const dateStr = selectedDateKey || new Date().toISOString().split('T')[0];
         setEditIndex(null);
         setForm({
             date: dateStr,
-            exercises: [{ name: '', sets: '', reps: '', duration: '', weight: '' }],
+            logType: type,
+            exercises: type === 'weight'
+                ? [{ name: '', sets: '', reps: '', weight: '' }]
+                : [{ name: '', distance: '', duration: '', speed: '' }],
         });
         setShowModal(true);
     };
 
     const openEdit = (globalIndex) => {
         const log = state.gymLog[globalIndex];
+        const isCardio = log.type === 'cardio';
         setEditIndex(globalIndex);
         setForm({
             date: log.date,
-            exercises: log.exercises.map((ex) => ({
+            logType: isCardio ? 'cardio' : 'weight',
+            exercises: log.exercises.map((ex) => (isCardio ? {
+                name: ex.name,
+                distance: ex.distance || '',
+                duration: ex.duration || '',
+                speed: ex.speed || '',
+            } : {
                 name: ex.name,
                 sets: ex.sets ? String(ex.sets) : '',
                 reps: ex.reps ? String(ex.reps) : '',
-                duration: ex.duration || '',
                 weight: ex.weight || '',
             })),
         });
@@ -119,19 +135,25 @@ export default function GymTakip() {
 
     const handleSave = () => {
         if (!form.date) return;
+        const isCardio = form.logType === 'cardio';
+
         const validExercises = form.exercises
             .filter((ex) => ex.name.trim())
-            .map((ex) => ({
+            .map((ex) => (isCardio ? {
+                name: ex.name.trim(),
+                distance: ex.distance?.toString().trim() || '',
+                duration: ex.duration?.toString().trim() || '',
+                speed: ex.speed?.toString().trim() || '',
+            } : {
                 name: ex.name.trim(),
                 sets: parseInt(ex.sets) || 0,
                 reps: parseInt(ex.reps) || 0,
-                duration: ex.duration.trim(),
-                weight: ex.weight.trim(),
+                weight: ex.weight?.toString().trim() || '',
             }));
 
         if (validExercises.length === 0) return;
 
-        const payload = { date: form.date, exercises: validExercises };
+        const payload = { date: form.date, type: form.logType, exercises: validExercises };
 
         if (editIndex !== null) {
             dispatch({ type: 'EDIT_GYM_LOG', index: editIndex, payload });
@@ -140,7 +162,8 @@ export default function GymTakip() {
         }
         setForm({
             date: '',
-            exercises: [{ name: '', sets: '', reps: '', duration: '', weight: '' }],
+            logType: 'weight',
+            exercises: [{ name: '', sets: '', reps: '', weight: '' }],
         });
         setEditIndex(null);
         setShowModal(false);
@@ -162,20 +185,26 @@ export default function GymTakip() {
         if (validExercises.length === 0) return;
         dispatch({
             type: 'SAVE_GYM_TEMPLATE',
-            payload: { name: templateName.trim(), exercises: validExercises },
+            payload: { name: templateName.trim(), type: form.logType, exercises: validExercises },
         });
         setTemplateName('');
         setShowTemplateSave(false);
     };
 
     const loadTemplate = (tmpl) => {
+        const isCardio = tmpl.type === 'cardio';
         setForm({
             ...form,
-            exercises: tmpl.exercises.map(ex => ({
+            logType: isCardio ? 'cardio' : 'weight',
+            exercises: tmpl.exercises.map(ex => (isCardio ? {
+                name: ex.name,
+                distance: ex.distance || '',
+                duration: ex.duration || '',
+                speed: ex.speed || '',
+            } : {
                 name: ex.name,
                 sets: ex.sets ? String(ex.sets) : '',
                 reps: ex.reps ? String(ex.reps) : '',
-                duration: ex.duration || '',
                 weight: ex.weight || '',
             })),
         });
@@ -211,9 +240,14 @@ export default function GymTakip() {
                     </button>
                 </div>
                 {subTab === 'takip' && (
-                    <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
-                        {t('gym_btn_add', '+ Antrenman Ekle')}
-                    </button>
+                    <div className="flex gap-2">
+                        <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
+                            🏃‍♂️ {t('gym_btn_cardio', 'Kardiyo')}
+                        </button>
+                        <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
+                            🏋️‍♂️ {t('gym_btn_add', 'Antrenman')}
+                        </button>
+                    </div>
                 )}
             </div>
 
@@ -268,16 +302,16 @@ export default function GymTakip() {
                                         <button
                                             key={day}
                                             className={`
-                    py-2 rounded-xl text-sm font-medium transition-all duration-150
-                    flex items-center justify-center relative
-                    ${isSelected
+                                                py-2 rounded-xl text-sm font-medium transition-all duration-150
+                                                flex items-center justify-center relative
+                                                ${isSelected
                                                     ? 'bg-primary text-primary-content shadow-md shadow-primary/20'
                                                     : hasLog
                                                         ? 'bg-primary/15 text-primary hover:bg-primary/25'
                                                         : 'hover:bg-base-300'
                                                 }
-                    ${isToday && !isSelected ? 'ring-1 ring-primary/50' : ''}
-                  `}
+                                                ${isToday && !isSelected ? 'ring-1 ring-primary/50' : ''}
+                                            `}
                                             onClick={() => setSelectedDate(day)}
                                         >
                                             {day}
@@ -310,55 +344,79 @@ export default function GymTakip() {
                                 </div>
 
                                 {selectedLogs.length > 0 ? (
-                                    <div className="card bg-base-200 rounded-xl">
-                                        <div className="card-body p-4">
-                                            <div className="overflow-x-auto">
-                                                <table className="table table-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>{t('gym_move', 'Hareket')}</th>
-                                                            <th>{t('gym_sets', 'Set')}</th>
-                                                            <th>{t('gym_reps', 'Tekrar')}</th>
-                                                            <th>{t('gym_weight', 'Ağırlık')}</th>
-                                                            <th>{t('gym_duration', 'Süre')}</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {selectedLogs.flatMap(log =>
-                                                            log.exercises.map((ex, j) => (
-                                                                <tr key={`${log._index}-${j}`}>
-                                                                    <td className="font-medium">{ex.name}</td>
-                                                                    <td>{ex.sets || '—'}</td>
-                                                                    <td>{ex.reps || '—'}</td>
-                                                                    <td>{ex.weight || '—'}</td>
-                                                                    <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
-                                                                    <td className="text-right">
-                                                                        {j === 0 && (
-                                                                            <div className="flex gap-1 justify-end">
-                                                                                <button
-                                                                                    className="btn btn-ghost btn-xs text-info"
-                                                                                    style={{ transform: 'scaleX(-1)' }}
-                                                                                    onClick={() => openEdit(log._index)}
-                                                                                >
-                                                                                    ✎
-                                                                                </button>
-                                                                                <button
-                                                                                    className="btn btn-ghost btn-xs text-error"
-                                                                                    onClick={() => setDeleteIndex(log._index)}
-                                                                                >
-                                                                                    ✕
-                                                                                </button>
-                                                                            </div>
+                                    <div className="space-y-4">
+                                        {selectedLogs.map(log => {
+                                            const isCardio = log.type === 'cardio';
+                                            return (
+                                                <div key={log._index} className="card bg-base-200 rounded-xl overflow-hidden relative">
+                                                    <div className={`absolute top-0 left-0 w-1.5 h-full ${isCardio ? 'bg-secondary' : 'bg-primary'}`}></div>
+                                                    <div className="card-body p-4 pl-6">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <h5 className="font-semibold text-sm">
+                                                                {isCardio ? <span className="text-secondary">🏃‍♂️ Kardiyo</span> : <span className="text-primary">🏋️‍♂️ Ağırlık Antrenmanı</span>}
+                                                            </h5>
+                                                            <div className="flex gap-1">
+                                                                <button
+                                                                    className="btn btn-ghost btn-xs text-info"
+                                                                    style={{ transform: 'scaleX(-1)' }}
+                                                                    onClick={() => openEdit(log._index)}
+                                                                >
+                                                                    ✎
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-ghost btn-xs text-error"
+                                                                    onClick={() => setDeleteIndex(log._index)}
+                                                                >
+                                                                    ✕
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="overflow-x-auto">
+                                                            <table className="table table-sm">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>{t('gym_move', 'Hareket')}</th>
+                                                                        {isCardio ? (
+                                                                            <>
+                                                                                <th>{t('gym_distance', 'Mesafe')}</th>
+                                                                                <th>{t('gym_duration', 'Süre')}</th>
+                                                                                <th>{t('gym_speed', 'Ortalama Hız')}</th>
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <th>{t('gym_sets', 'Set')}</th>
+                                                                                <th>{t('gym_reps', 'Tekrar')}</th>
+                                                                                <th>{t('gym_weight', 'Ağırlık')}</th>
+                                                                            </>
                                                                         )}
-                                                                    </td>
-                                                                </tr>
-                                                            ))
-                                                        )}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {log.exercises.map((ex, j) => (
+                                                                        <tr key={j}>
+                                                                            <td className="font-medium">{ex.name}</td>
+                                                                            {isCardio ? (
+                                                                                <>
+                                                                                    <td>{ex.distance ? `${ex.distance} km` : '—'}</td>
+                                                                                    <td>{ex.duration ? `${ex.duration} dk` : '—'}</td>
+                                                                                    <td>{ex.speed ? `${ex.speed} km/s` : '—'}</td>
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <td>{ex.sets || '—'}</td>
+                                                                                    <td>{ex.reps || '—'}</td>
+                                                                                    <td>{ex.weight || '—'}</td>
+                                                                                </>
+                                                                            )}
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="card bg-base-200 rounded-xl">
@@ -384,7 +442,10 @@ export default function GymTakip() {
                                 transition={{ duration: 0.2 }}
                             >
                                 <h3 className="font-bold text-lg mb-4">
-                                    {editIndex !== null ? t('gym_modal_edit', 'Antrenman Düzenle') : t('gym_modal_add', 'Antrenman Ekle')}
+                                    {editIndex !== null
+                                        ? (form.logType === 'cardio' ? t('gym_modal_edit_cardio', 'Kardiyo Düzenle') : t('gym_modal_edit', 'Antrenman Düzenle'))
+                                        : (form.logType === 'cardio' ? t('gym_modal_add_cardio', 'Kardiyo Ekle') : t('gym_modal_add', 'Antrenman Ekle'))
+                                    }
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="form-control">
@@ -398,25 +459,28 @@ export default function GymTakip() {
                                     </div>
 
                                     {/* Templates */}
-                                    {templates.length > 0 && (
+                                    {templates.filter(t => (t.type || 'weight') === form.logType).length > 0 && (
                                         <div>
                                             <label className="label"><span className="label-text text-xs">{t('gym_templates', 'Şablonlar')}</span></label>
                                             <div className="flex flex-wrap gap-2">
-                                                {templates.map((tmpl, i) => (
-                                                    <button
-                                                        key={i}
-                                                        className="btn btn-sm btn-ghost bg-base-200 rounded-xl group"
-                                                        onClick={() => loadTemplate(tmpl)}
-                                                    >
-                                                        📋 {tmpl.name}
-                                                        <span
-                                                            className="text-error opacity-0 group-hover:opacity-100 transition-opacity ml-1"
-                                                            onClick={(e) => { e.stopPropagation(); deleteTemplate(i); }}
+                                                {templates.map((tmpl, i) => {
+                                                    if ((tmpl.type || 'weight') !== form.logType) return null;
+                                                    return (
+                                                        <button
+                                                            key={i}
+                                                            className="btn btn-sm btn-ghost bg-base-200 rounded-xl group"
+                                                            onClick={() => loadTemplate(tmpl)}
                                                         >
-                                                            ✕
-                                                        </span>
-                                                    </button>
-                                                ))}
+                                                            📋 {tmpl.name}
+                                                            <span
+                                                                className="text-error opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                                                                onClick={(e) => { e.stopPropagation(); deleteTemplate(i); }}
+                                                            >
+                                                                ✕
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -429,61 +493,52 @@ export default function GymTakip() {
                                             </button>
                                         </div>
                                         {form.exercises.map((ex, i) => (
-                                            <div key={i} className="grid grid-cols-7 gap-2 items-end">
-                                                <div className="col-span-2">
+                                            <div key={i} className={`flex gap-2 items-end`}>
+                                                <div className="flex-1">
                                                     {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_move', 'Hareket')}</span></label>}
                                                     <input
                                                         type="text"
                                                         className="input input-bordered input-sm rounded-xl w-full"
                                                         value={ex.name}
                                                         onChange={(e) => updateExercise(i, 'name', e.target.value)}
-                                                        placeholder={t('gym_name', 'Adı')}
+                                                        placeholder={form.logType === 'cardio' ? t('gym_name_cardio', 'Koşu, Yüzme...') : t('gym_name', 'Adı')}
                                                     />
                                                 </div>
-                                                <div>
-                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_sets', 'Set')}</span></label>}
-                                                    <input
-                                                        type="number"
-                                                        className="input input-bordered input-sm rounded-xl w-full"
-                                                        value={ex.sets}
-                                                        onChange={(e) => updateExercise(i, 'sets', e.target.value)}
-                                                        placeholder="4"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_reps', 'Tekrar')}</span></label>}
-                                                    <input
-                                                        type="number"
-                                                        className="input input-bordered input-sm rounded-xl w-full"
-                                                        value={ex.reps}
-                                                        onChange={(e) => updateExercise(i, 'reps', e.target.value)}
-                                                        placeholder="12"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_weight', 'Ağırlık')}</span></label>}
-                                                    <input
-                                                        type="text"
-                                                        className="input input-bordered input-sm rounded-xl w-full"
-                                                        value={ex.weight}
-                                                        onChange={(e) => updateExercise(i, 'weight', e.target.value)}
-                                                        placeholder="kg"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    {i === 0 && <label className="label"><span className="label-text text-xs">{t('gym_duration', 'Süre')}</span></label>}
-                                                    <input
-                                                        type="number"
-                                                        className="input input-bordered input-sm rounded-xl w-full"
-                                                        value={ex.duration}
-                                                        onChange={(e) => updateExercise(i, 'duration', e.target.value)}
-                                                        placeholder="dk"
-                                                    />
-                                                </div>
-                                                <div className="flex items-end">
+                                                {form.logType === 'cardio' ? (
+                                                    <>
+                                                        <div className="w-20">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_dist', 'Mesafe')}</span></label>}
+                                                            <input type="number" step="0.1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.distance || ''} onChange={(e) => updateExercise(i, 'distance', e.target.value)} placeholder="km" />
+                                                        </div>
+                                                        <div className="w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_dur', 'Süre')}</span></label>}
+                                                            <input type="number" step="1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.duration || ''} onChange={(e) => updateExercise(i, 'duration', e.target.value)} placeholder="dk" />
+                                                        </div>
+                                                        <div className="w-20">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_spd', 'Hız')}</span></label>}
+                                                            <input type="number" step="0.1" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.speed || ''} onChange={(e) => updateExercise(i, 'speed', e.target.value)} placeholder="km/s" />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_sets', 'Set')}</span></label>}
+                                                            <input type="number" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.sets || ''} onChange={(e) => updateExercise(i, 'sets', e.target.value)} placeholder="4" />
+                                                        </div>
+                                                        <div className="w-16">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_reps', 'Tekrar')}</span></label>}
+                                                            <input type="number" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.reps || ''} onChange={(e) => updateExercise(i, 'reps', e.target.value)} placeholder="12" />
+                                                        </div>
+                                                        <div className="w-20">
+                                                            {i === 0 && <label className="label px-0 block text-center"><span className="label-text text-[10px] break-all">{t('gym_weight', 'Ağırlık')}</span></label>}
+                                                            <input type="text" className="input input-bordered input-sm rounded-xl w-full px-2 text-center" value={ex.weight || ''} onChange={(e) => updateExercise(i, 'weight', e.target.value)} placeholder="kg" />
+                                                        </div>
+                                                    </>
+                                                )}
+                                                <div className="w-8 flex justify-center pb-1">
                                                     {form.exercises.length > 1 && (
                                                         <button
-                                                            className="btn btn-ghost btn-sm btn-square text-error"
+                                                            className="btn btn-ghost btn-sm btn-square text-error min-h-0 h-8"
                                                             onClick={() => removeExerciseRow(i)}
                                                         >
                                                             ✕
