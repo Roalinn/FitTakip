@@ -147,17 +147,18 @@ export default function SuTakip() {
             >
                 <div className="card-body p-4">
                     <h4 className="font-semibold text-sm mb-3">{t('su_last_7', 'Son 7 Gün')}</h4>
-                    <div className="relative flex items-end justify-between gap-2 h-36">
+                    {/* Bar area */}
+                    <div className="relative h-28">
                         {/* Goal dashed line */}
                         <div
-                            className="absolute left-0 right-0 border-t-2 border-dashed border-primary/30 pointer-events-none"
+                            className="absolute left-0 right-0 border-t-2 border-dashed border-primary/40 pointer-events-none z-20"
                             style={{ bottom: `${(dailyGoal / maxGlasses) * 100}%` }}
                         >
                             <span className="absolute -top-4 right-0 text-xs text-primary/50">{dailyGoal} 💧</span>
                         </div>
-                        {last7Days.map((day, i) => (
-                            <div key={i} className="flex flex-col items-center flex-1 h-full justify-end z-10">
-                                <div className="flex-1 w-full flex items-end justify-center">
+                        <div className="flex items-end justify-between gap-2 h-full">
+                            {last7Days.map((day, i) => (
+                                <div key={i} className="flex-1 h-full flex items-end justify-center">
                                     <div
                                         className={`w-full max-w-[2rem] rounded-t-lg transition-all duration-300 ${day.glasses >= dailyGoal ? 'bg-success' :
                                                 day.glasses > 0 ? 'bg-primary' : 'bg-base-300'
@@ -167,10 +168,17 @@ export default function SuTakip() {
                                         }}
                                     ></div>
                                 </div>
-                                <span className="text-xs text-base-content/40 mt-1">{day.glasses}</span>
-                                <span className={`text-xs mt-0.5 ${day.isToday ? 'font-bold text-primary' : 'text-base-content/40'}`}>
+                            ))}
+                        </div>
+                    </div>
+                    {/* Labels */}
+                    <div className="flex justify-between gap-2 mt-1">
+                        {last7Days.map((day, i) => (
+                            <div key={i} className="flex-1 text-center">
+                                <p className="text-xs text-base-content/40">{day.glasses}</p>
+                                <p className={`text-xs mt-0.5 ${day.isToday ? 'font-bold text-primary' : 'text-base-content/40'}`}>
                                     {day.label}
-                                </span>
+                                </p>
                             </div>
                         ))}
                     </div>

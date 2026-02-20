@@ -18,7 +18,7 @@ export default function Takip() {
         { key: 'kilo', label: t('takip_tab_kilo') },
         { key: 'beden', label: t('takip_tab_beden') },
         { key: 'gym', label: t('takip_tab_gym') },
-        { key: 'su', label: t('takip_tab_su', 'Su') },
+        { key: 'su', label: t('takip_tab_su', 'Su Takip') },
         { key: 'foto', label: t('takip_tab_foto') },
     ];
 
