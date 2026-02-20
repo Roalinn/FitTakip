@@ -29,6 +29,8 @@ const defaultState = {
     bodyMeasurements: [],
     gymLog: [],
     photos: [],
+    waterLog: [],
+    gymTemplates: [],
 };
 
 function loadState() {
@@ -187,6 +189,31 @@ function reducer(state, action) {
             return {
                 ...state,
                 photos: state.photos.filter((_, i) => i !== action.index),
+            };
+
+        case 'SET_WATER': {
+            const existing = (state.waterLog || []).find(w => w.date === action.date);
+            if (existing) {
+                return {
+                    ...state,
+                    waterLog: state.waterLog.map(w => w.date === action.date ? { ...w, glasses: action.glasses } : w),
+                };
+            }
+            return {
+                ...state,
+                waterLog: [...(state.waterLog || []), { date: action.date, glasses: action.glasses }],
+            };
+        }
+
+        case 'SAVE_GYM_TEMPLATE':
+            return {
+                ...state,
+                gymTemplates: [...(state.gymTemplates || []), action.payload],
+            };
+        case 'DELETE_GYM_TEMPLATE':
+            return {
+                ...state,
+                gymTemplates: (state.gymTemplates || []).filter((_, i) => i !== action.index),
             };
 
         default:

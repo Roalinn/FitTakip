@@ -11,6 +11,8 @@ export default function GymTakip() {
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
+    const [showTemplateSave, setShowTemplateSave] = useState(false);
+    const [templateName, setTemplateName] = useState('');
     const [currentMonth, setCurrentMonth] = useState(() => {
         const now = new Date();
         return { year: now.getFullYear(), month: now.getMonth() };
@@ -149,6 +151,38 @@ export default function GymTakip() {
             dispatch({ type: 'DELETE_GYM_LOG', index: deleteIndex });
             setDeleteIndex(null);
         }
+    };
+
+    // Templates
+    const templates = state.gymTemplates || [];
+
+    const saveTemplate = () => {
+        if (!templateName.trim()) return;
+        const validExercises = form.exercises.filter(ex => ex.name.trim());
+        if (validExercises.length === 0) return;
+        dispatch({
+            type: 'SAVE_GYM_TEMPLATE',
+            payload: { name: templateName.trim(), exercises: validExercises },
+        });
+        setTemplateName('');
+        setShowTemplateSave(false);
+    };
+
+    const loadTemplate = (tmpl) => {
+        setForm({
+            ...form,
+            exercises: tmpl.exercises.map(ex => ({
+                name: ex.name,
+                sets: ex.sets ? String(ex.sets) : '',
+                reps: ex.reps ? String(ex.reps) : '',
+                duration: ex.duration || '',
+                weight: ex.weight || '',
+            })),
+        });
+    };
+
+    const deleteTemplate = (index) => {
+        dispatch({ type: 'DELETE_GYM_TEMPLATE', index });
     };
 
     const DOW_LABELS = [
@@ -363,6 +397,31 @@ export default function GymTakip() {
                                         />
                                     </div>
 
+                                    {/* Templates */}
+                                    {templates.length > 0 && (
+                                        <div>
+                                            <label className="label"><span className="label-text text-xs">{t('gym_templates', 'Şablonlar')}</span></label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {templates.map((tmpl, i) => (
+                                                    <div key={i} className="flex items-center gap-1">
+                                                        <button
+                                                            className="btn btn-sm btn-ghost bg-base-200 rounded-xl"
+                                                            onClick={() => loadTemplate(tmpl)}
+                                                        >
+                                                            📋 {tmpl.name}
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-ghost btn-xs text-error"
+                                                            onClick={() => deleteTemplate(i)}
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
                                             <label className="label-text font-medium">{t('gym_exercises', 'Hareketler')}</label>
@@ -436,8 +495,36 @@ export default function GymTakip() {
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* Save as template */}
+                                {showTemplateSave ? (
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <input
+                                            type="text"
+                                            className="input input-bordered input-sm rounded-xl flex-1"
+                                            placeholder={t('gym_template_name', 'Şablon adı...')}
+                                            value={templateName}
+                                            onChange={(e) => setTemplateName(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && saveTemplate()}
+                                        />
+                                        <button className="btn btn-sm btn-primary rounded-xl" onClick={saveTemplate}>
+                                            {t('modal_btn_save', 'Kaydet')}
+                                        </button>
+                                        <button className="btn btn-sm btn-ghost rounded-xl" onClick={() => setShowTemplateSave(false)}>
+                                            {t('modal_btn_cancel', 'İptal')}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="btn btn-ghost btn-sm text-base-content/50 mt-2"
+                                        onClick={() => setShowTemplateSave(true)}
+                                    >
+                                        📋 {t('gym_save_template', 'Şablon Olarak Kaydet')}
+                                    </button>
+                                )}
+
                                 <div className="modal-action">
-                                    <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); }}>{t('modal_btn_cancel', 'İptal')}</button>
+                                    <button className="btn btn-ghost rounded-xl" onClick={() => { setShowModal(false); setEditIndex(null); setShowTemplateSave(false); }}>{t('modal_btn_cancel', 'İptal')}</button>
                                     <button className="btn btn-primary rounded-xl" onClick={handleSave}>
                                         {editIndex !== null ? t('modal_btn_save', 'Kaydet') : t('modal_btn_add', 'Ekle')}
                                     </button>
