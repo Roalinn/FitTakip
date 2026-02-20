@@ -4,6 +4,7 @@ import KiloTakip from '../components/KiloTakip';
 import BedenOlculeri from '../components/BedenOlculeri';
 import GymTakip from '../components/GymTakip';
 import FotoTakip from '../components/FotoTakip';
+import ExerciseProgress from '../components/ExerciseProgress';
 import { useTranslation } from '../hooks/useTranslation';
 
 import { useStore } from '../store/useStore';
@@ -17,6 +18,7 @@ export default function Takip() {
         { key: 'kilo', label: t('takip_tab_kilo') },
         { key: 'beden', label: t('takip_tab_beden') },
         { key: 'gym', label: t('takip_tab_gym') },
+        { key: '1rm', label: '1RM' },
         { key: 'foto', label: t('takip_tab_foto') },
     ];
 
@@ -24,6 +26,7 @@ export default function Takip() {
         kilo: KiloTakip,
         beden: BedenOlculeri,
         gym: GymTakip,
+        '1rm': ExerciseProgress,
         foto: FotoTakip,
     };
 

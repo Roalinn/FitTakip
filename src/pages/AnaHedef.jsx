@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
-
+import Dashboard from '../components/Dashboard';
 export default function AnaHedef() {
     const { state, dispatch } = useStore();
     const { goal, weightLog } = state;
@@ -336,6 +336,9 @@ export default function AnaHedef() {
                     </div>
                 </motion.div>
             )}
+
+            {/* Dashboard Section */}
+            <Dashboard />
         </div>
     );
 }

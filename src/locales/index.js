@@ -181,6 +181,44 @@ const tr = {
     toast_updated: 'Kayıt başarıyla güncellendi',
     toast_deleted: 'Kayıt başarıyla silindi',
     toast_copied: 'Program başarıyla kopyalandı',
+
+    // Dashboard
+    dash_today_program: 'Bugünün Programı',
+    dash_diet_meals: 'öğün planlandı',
+    dash_gym_exercises: 'hareket planlandı',
+    dash_no_program: 'Program yok',
+    dash_streak: 'Antrenman Serisi',
+    dash_streak_days: 'gün seri',
+    dash_last_workout: 'Son Antrenman',
+    dash_total_workouts: 'Toplam Antrenman',
+    dash_quick_stats: 'Hızlı İstatistikler',
+    dash_weight_change: 'Kilo Değişimi',
+    dash_this_month: 'Bu Ay',
+    dash_workouts: 'antrenman',
+
+    // Exercise Progress / 1RM
+    exercise_progress_title: 'Egzersiz Gelişimi',
+    exercise_progress_desc: 'Hareketlerinizin ağırlık gelişimini takip edin',
+    exercise_select: 'Hareket Seç',
+    exercise_no_data: 'Bu hareket için henüz kayıt yok.',
+    exercise_max_weight: 'Maks. Ağırlık',
+    exercise_estimated_1rm: 'Tahmini 1RM',
+    exercise_total_volume: 'Toplam Hacim',
+    exercise_best_set: 'En İyi Set',
+
+    // Theme
+    settings_theme_desc: 'Uygulama temasını seçin',
+
+    // PDF
+    pdf_export: 'PDF Olarak İndir',
+    pdf_generating: 'PDF oluşturuluyor...',
+
+    // Before/After
+    foto_compare: 'Kıyasla',
+    foto_compare_title: 'Öncesi & Sonrası',
+    foto_select_before: 'Önceki fotoğrafı seçin',
+    foto_select_after: 'Sonraki fotoğrafı seçin',
+    foto_download: 'Kolajı İndir',
 };
 
 // English Translations
@@ -366,6 +404,44 @@ const en = {
     toast_updated: 'Record updated successfully',
     toast_deleted: 'Record deleted successfully',
     toast_copied: 'Program copied successfully',
+
+    // Dashboard
+    dash_today_program: "Today's Program",
+    dash_diet_meals: 'meals planned',
+    dash_gym_exercises: 'exercises planned',
+    dash_no_program: 'No program',
+    dash_streak: 'Workout Streak',
+    dash_streak_days: 'day streak',
+    dash_last_workout: 'Last Workout',
+    dash_total_workouts: 'Total Workouts',
+    dash_quick_stats: 'Quick Stats',
+    dash_weight_change: 'Weight Change',
+    dash_this_month: 'This Month',
+    dash_workouts: 'workouts',
+
+    // Exercise Progress / 1RM
+    exercise_progress_title: 'Exercise Progress',
+    exercise_progress_desc: 'Track weight progress for your exercises',
+    exercise_select: 'Select Exercise',
+    exercise_no_data: 'No records yet for this exercise.',
+    exercise_max_weight: 'Max Weight',
+    exercise_estimated_1rm: 'Estimated 1RM',
+    exercise_total_volume: 'Total Volume',
+    exercise_best_set: 'Best Set',
+
+    // Theme
+    settings_theme_desc: 'Choose application theme',
+
+    // PDF
+    pdf_export: 'Download as PDF',
+    pdf_generating: 'Generating PDF...',
+
+    // Before/After
+    foto_compare: 'Compare',
+    foto_compare_title: 'Before & After',
+    foto_select_before: 'Select before photo',
+    foto_select_after: 'Select after photo',
+    foto_download: 'Download Collage',
 };
 
 const translations = { tr, en };
