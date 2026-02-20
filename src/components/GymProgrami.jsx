@@ -12,7 +12,7 @@ export default function GymProgrami() {
     const [showModal, setShowModal] = useState(false);
     const [editIndex, setEditIndex] = useState(null);
     const [deleteIndex, setDeleteIndex] = useState(null);
-    const [form, setForm] = useState({ name: '', sets: '', reps: '', duration: '', note: '' });
+    const [form, setForm] = useState({ type: 'weight', name: '', sets: '', reps: '', duration: '', distance: '', speed: '', note: '' });
 
     const DAYS_CONFIG = [
         { key: 'pazartesi', label: t('day_short_pzt', 'Pzt'), full: t('day_full_pzt', 'Pazartesi') },
@@ -27,9 +27,9 @@ export default function GymProgrami() {
     const currentDayConfig = DAYS_CONFIG.find(d => d.key === selectedDay);
     const exercises = state.gymProgram[selectedDay] || [];
 
-    const openAdd = () => {
+    const openAdd = (type = 'weight') => {
         setEditIndex(null);
-        setForm({ name: '', sets: '', reps: '', duration: '', note: '' });
+        setForm({ type, name: '', sets: '', reps: '', duration: '', distance: '', speed: '', note: '' });
         setShowModal(true);
     };
 
@@ -37,10 +37,13 @@ export default function GymProgrami() {
         const ex = exercises[index];
         setEditIndex(index);
         setForm({
+            type: ex.type || 'weight',
             name: ex.name,
             sets: ex.sets ? String(ex.sets) : '',
             reps: ex.reps ? String(ex.reps) : '',
             duration: ex.duration ? String(ex.duration) : '',
+            distance: ex.distance ? String(ex.distance) : '',
+            speed: ex.speed ? String(ex.speed) : '',
             note: ex.note || '',
         });
         setShowModal(true);
@@ -49,10 +52,13 @@ export default function GymProgrami() {
     const handleSave = () => {
         if (!form.name.trim()) return;
         const payload = {
+            type: form.type,
             name: form.name.trim(),
             sets: parseInt(form.sets) || 0,
             reps: parseInt(form.reps) || 0,
             duration: parseInt(form.duration) || 0,
+            distance: parseFloat(form.distance) || 0,
+            speed: parseFloat(form.speed) || 0,
             note: form.note.trim(),
         };
 
@@ -61,7 +67,7 @@ export default function GymProgrami() {
         } else {
             dispatch({ type: 'ADD_GYM_EXERCISE', day: selectedDay, payload });
         }
-        setForm({ name: '', sets: '', reps: '', duration: '', note: '' });
+        setForm({ type: 'weight', name: '', sets: '', reps: '', duration: '', distance: '', speed: '', note: '' });
         setEditIndex(null);
         setShowModal(false);
     };
@@ -122,16 +128,19 @@ export default function GymProgrami() {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     </button>
-                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handleCopy} title="Programı Kopyala">
+                    <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handleCopy} title="Programı Kopyala">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
                     </button>
                     {sessionStorage.getItem('fittakip_copied_gym') && (
-                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl" onClick={handlePaste} title="Yapıştır">
+                        <button className="btn btn-ghost bg-base-200 btn-sm btn-square rounded-xl hidden sm:flex" onClick={handlePaste} title="Yapıştır">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         </button>
                     )}
-                    <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
-                        {t('gym_btn_add', '+ Hareket Ekle')}
+                    <button className="btn btn-secondary btn-sm rounded-xl" onClick={() => openAdd('cardio')}>
+                        + {t('gym_btn_cardio_add', 'Kardiyo Ekle')}
+                    </button>
+                    <button className="btn btn-primary btn-sm rounded-xl" onClick={() => openAdd('weight')}>
+                        + {t('gym_btn_add_ext', 'Antrenman Ekle')}
                     </button>
                 </div>
             </div>
@@ -147,60 +156,63 @@ export default function GymProgrami() {
                 </div>
             ) : (
                 <div className="space-y-3">
-                    {exercises.map((ex, i) => (
-                        <motion.div
-                            key={i}
-                            className="card bg-base-200 rounded-xl"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.05 }}
-                        >
-                            <div className="card-body p-4">
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold mb-2">{ex.name}</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {ex.sets > 0 && (
-                                                <span className="badge badge-sm bg-primary/10 text-primary border-0 rounded-lg">
-                                                    {ex.sets} {t('gym_sets', 'Set')}
-                                                </span>
-                                            )}
-                                            {ex.reps > 0 && (
-                                                <span className="badge badge-sm bg-info/10 text-info border-0 rounded-lg">
-                                                    {ex.reps} {t('gym_reps', 'Tekrar')}
-                                                </span>
-                                            )}
-                                            {ex.duration > 0 && (
-                                                <span className="badge badge-sm bg-warning/10 text-warning border-0 rounded-lg">
-                                                    {ex.duration} {t('gym_min', 'Dakika')}
-                                                </span>
+                    {exercises.map((ex, i) => {
+                        const isCardio = ex.type === 'cardio';
+                        return (
+                            <motion.div
+                                key={i}
+                                className="card bg-base-200 rounded-xl overflow-hidden relative"
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                            >
+                                <div className={`absolute top-0 left-0 w-1.5 h-full ${isCardio ? 'bg-secondary' : 'bg-primary'}`}></div>
+                                <div className="card-body p-4 pl-6">
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-semibold mb-2">
+                                                {ex.name}
+                                            </h4>
+                                            <div className="flex flex-wrap gap-2 mt-1 mb-2">
+                                                {isCardio ? (
+                                                    <div className="flex flex-wrap gap-2 text-sm text-base-content/80">
+                                                        {ex.distance > 0 && <span className="bg-secondary/10 text-secondary px-2 py-0.5 rounded-lg">{ex.distance} km</span>}
+                                                        {ex.duration > 0 && <span className="bg-secondary/10 text-secondary px-2 py-0.5 rounded-lg">{ex.duration} dk</span>}
+                                                        {ex.speed > 0 && <span className="bg-secondary/10 text-secondary px-2 py-0.5 rounded-lg">{ex.speed} km/s</span>}
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-wrap gap-2 text-sm text-base-content/80">
+                                                        {ex.sets > 0 && <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-lg">{ex.sets} {t('gym_sets', 'Set')}</span>}
+                                                        {ex.reps > 0 && <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-lg">{ex.reps} {t('gym_reps', 'Tekrar')}</span>}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {ex.note && (
+                                                <p className="text-xs text-base-content/50 mt-1 italic">{ex.note}</p>
                                             )}
                                         </div>
-                                        {ex.note && (
-                                            <p className="text-xs text-base-content/40 mt-2 italic">{ex.note}</p>
-                                        )}
-                                    </div>
-                                    <div className="flex items-center gap-1 ml-2">
-                                        <button
-                                            className="btn btn-ghost btn-xs text-info"
-                                            style={{ transform: 'scaleX(-1)' }}
-                                            onClick={() => openEdit(i)}
-                                            title={t('modal_btn_edit', 'Düzenle')}
-                                        >
-                                            ✎
-                                        </button>
-                                        <button
-                                            className="btn btn-ghost btn-xs text-error"
-                                            onClick={() => setDeleteIndex(i)}
-                                            title={t('modal_btn_delete', 'Sil')}
-                                        >
-                                            ✕
-                                        </button>
+                                        <div className="flex items-center gap-1 ml-2">
+                                            <button
+                                                className="btn btn-ghost btn-xs text-info"
+                                                style={{ transform: 'scaleX(-1)' }}
+                                                onClick={() => openEdit(i)}
+                                                title={t('modal_btn_edit', 'Düzenle')}
+                                            >
+                                                ✎
+                                            </button>
+                                            <button
+                                                className="btn btn-ghost btn-xs text-error"
+                                                onClick={() => setDeleteIndex(i)}
+                                                title={t('modal_btn_delete', 'Sil')}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        );
+                    })}
                 </div>
             )}
 
@@ -214,7 +226,10 @@ export default function GymProgrami() {
                         transition={{ duration: 0.2 }}
                     >
                         <h3 className="font-bold text-lg mb-4">
-                            {editIndex !== null ? t('gym_modal_edit', 'Hareket Düzenle') : t('gym_modal_add', 'Hareket Ekle')} – {currentDayConfig.full}
+                            {editIndex !== null
+                                ? (form.type === 'cardio' ? t('gym_modal_edit_cardio', 'Kardiyo Düzenle') : t('gym_modal_edit', 'Hareket Düzenle'))
+                                : (form.type === 'cardio' ? t('gym_modal_add_cardio', 'Kardiyo Ekle') : t('gym_modal_add', 'Hareket Ekle'))
+                            } – {currentDayConfig.full}
                         </h3>
                         <div className="space-y-4">
                             <div className="form-control">
@@ -224,47 +239,76 @@ export default function GymProgrami() {
                                     className="input input-bordered rounded-xl w-full"
                                     value={form.name}
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                    placeholder="Bench Press, Squat..."
+                                    placeholder={form.type === 'cardio' ? "Koşu, Yüzme..." : "Bench Press, Squat..."}
                                 />
                             </div>
-                            <div className="grid grid-cols-3 gap-3">
-                                <div className="form-control">
-                                    <label className="label"><span className="label-text">{t('gym_sets', 'Set')}</span></label>
-                                    <input
-                                        type="text"
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        className="input input-bordered rounded-xl w-full"
-                                        value={form.sets}
-                                        onChange={handleNumericInput('sets')}
-                                        placeholder="4"
-                                    />
+
+                            {form.type === 'cardio' ? (
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="form-control">
+                                        <label className="label"><span className="label-text">{t('gym_dist', 'Mesafe')}</span></label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            className="input input-bordered rounded-xl w-full"
+                                            value={form.distance}
+                                            onChange={(e) => setForm({ ...form, distance: e.target.value })}
+                                            placeholder="km"
+                                        />
+                                    </div>
+                                    <div className="form-control">
+                                        <label className="label"><span className="label-text">{t('gym_duration_min', 'Süre')}</span></label>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            className="input input-bordered rounded-xl w-full"
+                                            value={form.duration}
+                                            onChange={handleNumericInput('duration')}
+                                            placeholder="dk"
+                                        />
+                                    </div>
+                                    <div className="form-control">
+                                        <label className="label"><span className="label-text">{t('gym_spd', 'Ort Hız')}</span></label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            className="input input-bordered rounded-xl w-full"
+                                            value={form.speed}
+                                            onChange={(e) => setForm({ ...form, speed: e.target.value })}
+                                            placeholder="km/s"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="form-control">
-                                    <label className="label"><span className="label-text">{t('gym_reps', 'Tekrar')}</span></label>
-                                    <input
-                                        type="text"
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        className="input input-bordered rounded-xl w-full"
-                                        value={form.reps}
-                                        onChange={handleNumericInput('reps')}
-                                        placeholder="12"
-                                    />
+                            ) : (
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="form-control">
+                                        <label className="label"><span className="label-text">{t('gym_sets', 'Set')}</span></label>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            className="input input-bordered rounded-xl w-full"
+                                            value={form.sets}
+                                            onChange={handleNumericInput('sets')}
+                                            placeholder="4"
+                                        />
+                                    </div>
+                                    <div className="form-control">
+                                        <label className="label"><span className="label-text">{t('gym_reps', 'Tekrar')}</span></label>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            className="input input-bordered rounded-xl w-full"
+                                            value={form.reps}
+                                            onChange={handleNumericInput('reps')}
+                                            placeholder="12"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="form-control">
-                                    <label className="label"><span className="label-text">{t('gym_duration_min', 'Süre (dk)')}</span></label>
-                                    <input
-                                        type="text"
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        className="input input-bordered rounded-xl w-full"
-                                        value={form.duration}
-                                        onChange={handleNumericInput('duration')}
-                                        placeholder="5"
-                                    />
-                                </div>
-                            </div>
+                            )}
+
                             <div className="form-control">
                                 <label className="label"><span className="label-text">{t('foto_note', 'Not (opsiyonel)')}</span></label>
                                 <input
