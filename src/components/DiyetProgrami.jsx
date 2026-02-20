@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
-import { showToast } from '../utils/toast';
-
 
 export default function DiyetProgrami() {
     const { state, dispatch } = useStore();
@@ -62,19 +60,16 @@ export default function DiyetProgrami() {
         setForm({ name: '', time: '08:00', foods: '', note: '' });
         setEditIndex(null);
         setShowModal(false);
-        showToast(editIndex !== null ? t('toast_updated', 'Kayıt güncellendi') : t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const handleCopy = () => {
         sessionStorage.setItem('fittakip_copied_diet', JSON.stringify(meals));
-        showToast(t('toast_copied', 'Program başarıyla kopyalandı'), 'success');
     };
 
     const handlePaste = () => {
         const copied = sessionStorage.getItem('fittakip_copied_diet');
         if (copied) {
             dispatch({ type: 'SET_DIET_PROGRAM', day: selectedDay, payload: JSON.parse(copied) });
-            showToast(t('toast_updated', 'Kayıt güncellendi'), 'success');
         }
     };
 
@@ -82,7 +77,6 @@ export default function DiyetProgrami() {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_DIET_MEAL', day: selectedDay, index: deleteIndex });
             setDeleteIndex(null);
-            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 

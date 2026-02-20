@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
-import { showToast } from '../utils/toast';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -33,7 +32,6 @@ export default function KiloTakip() {
         });
         setForm({ date: new Date().toISOString().split('T')[0], weight: '' });
         setShowAddModal(false);
-        showToast(t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const openEdit = (index) => {
@@ -50,14 +48,12 @@ export default function KiloTakip() {
             payload: { date: editForm.date, weight: parseFloat(editForm.weight) },
         });
         setEditIndex(null);
-        showToast(t('toast_updated', 'Kayıt güncellendi'), 'success');
     };
 
     const confirmDelete = () => {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_WEIGHT', index: deleteIndex });
             setDeleteIndex(null);
-            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 

@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
-import { showToast } from '../utils/toast';
 
 export default function FotoTakip() {
     const { state, dispatch } = useStore();
@@ -38,7 +37,6 @@ export default function FotoTakip() {
         setForm({ date: '', note: '' });
         setPreview(null);
         setShowModal(false);
-        showToast(t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const handleDelete = (index) => {
@@ -49,7 +47,6 @@ export default function FotoTakip() {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_PHOTO', index: deleteIndex });
             setDeleteIndex(null);
-            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 

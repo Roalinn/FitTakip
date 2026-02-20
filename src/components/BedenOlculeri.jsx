@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useTranslation } from '../hooks/useTranslation';
-import { showToast } from '../utils/toast';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -67,14 +66,12 @@ export default function BedenOlculeri() {
         setForm({ date: new Date().toISOString().split('T')[0], chest: '', waist: '', hip: '', arm: '', leg: '', shoulder: '' });
         setEditIndex(null);
         setShowModal(false);
-        showToast(editIndex !== null ? t('toast_updated', 'Kayıt güncellendi') : t('toast_added', 'Kayıt başarıyla eklendi'), 'success');
     };
 
     const confirmDelete = () => {
         if (deleteIndex !== null) {
             dispatch({ type: 'DELETE_BODY_MEASUREMENT', index: deleteIndex });
             setDeleteIndex(null);
-            showToast(t('toast_deleted', 'Kayıt silindi'), 'success');
         }
     };
 
@@ -245,7 +242,10 @@ export default function BedenOlculeri() {
             ) : (
                 <div className="card bg-base-200 rounded-xl">
                     <div className="card-body items-center text-center py-12 text-base-content/40">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 8h14a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1V9a1 1 0 011-1z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 8v3M12 8v3M16 8v3" />
+                        </svg>
                         <p>{t('beden_empty_state')}</p>
                     </div>
                 </div>
