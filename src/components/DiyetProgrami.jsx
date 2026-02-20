@@ -181,21 +181,9 @@ export default function DiyetProgrami() {
                             </div>
                             <div className="form-control">
                                 <label className="label"><span className="label-text">{t('diet_time', 'Saat')}</span></label>
-                                <div className="flex gap-2 isolate pt-1">
+                                <div className="flex gap-4 items-center">
                                     {/* Saat */}
-                                    <div className="flex-1 flex flex-col items-center bg-base-200 p-2 rounded-xl">
-                                        <button
-                                            className="btn btn-ghost btn-xs btn-circle"
-                                            onClick={() => {
-                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
-                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
-                                                h = (h + 1) % 24;
-                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
-                                            }}
-                                        >▲</button>
-                                        <div className="text-xl font-bold my-1">
-                                            {form.time ? form.time.split(':')[0] : '08'}
-                                        </div>
+                                    <div className="flex-1 flex items-center justify-between bg-base-200 p-1.5 rounded-xl">
                                         <button
                                             className="btn btn-ghost btn-xs btn-circle"
                                             onClick={() => {
@@ -204,23 +192,33 @@ export default function DiyetProgrami() {
                                                 h = h === 0 ? 23 : h - 1;
                                                 setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
                                             }}
-                                        >▼</button>
-                                    </div>
-                                    <div className="flex items-center text-xl font-bold pb-1 text-base-content/50">:</div>
-                                    {/* Dakika */}
-                                    <div className="flex-1 flex flex-col items-center bg-base-200 p-2 rounded-xl">
+                                        >◀</button>
+                                        <input
+                                            type="text"
+                                            className="input input-sm input-ghost text-center text-lg font-bold w-12 px-0 focus:outline-none focus:bg-base-100"
+                                            value={form.time ? form.time.split(':')[0] : '08'}
+                                            onChange={(e) => {
+                                                let val = parseInt(e.target.value);
+                                                if (isNaN(val)) val = 0;
+                                                if (val < 0) val = 0;
+                                                if (val > 23) val = 23;
+                                                let m = form.time ? form.time.split(':')[1] : '00';
+                                                setForm({ ...form, time: `${String(val).padStart(2, '0')}:${m}` });
+                                            }}
+                                        />
                                         <button
                                             className="btn btn-ghost btn-xs btn-circle"
                                             onClick={() => {
                                                 let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
                                                 let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
-                                                m = (m + 15) % 60;
+                                                h = (h + 1) % 24;
                                                 setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
                                             }}
-                                        >▲</button>
-                                        <div className="text-xl font-bold my-1">
-                                            {form.time ? form.time.split(':')[1] : '00'}
-                                        </div>
+                                        >▶</button>
+                                    </div>
+                                    <div className="text-xl font-bold text-base-content/50">:</div>
+                                    {/* Dakika */}
+                                    <div className="flex-1 flex items-center justify-between bg-base-200 p-1.5 rounded-xl">
                                         <button
                                             className="btn btn-ghost btn-xs btn-circle"
                                             onClick={() => {
@@ -229,7 +227,29 @@ export default function DiyetProgrami() {
                                                 m = m === 0 ? 45 : m - 15;
                                                 setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
                                             }}
-                                        >▼</button>
+                                        >◀</button>
+                                        <input
+                                            type="text"
+                                            className="input input-sm input-ghost text-center text-lg font-bold w-12 px-0 focus:outline-none focus:bg-base-100"
+                                            value={form.time ? form.time.split(':')[1] : '00'}
+                                            onChange={(e) => {
+                                                let val = parseInt(e.target.value);
+                                                if (isNaN(val)) val = 0;
+                                                if (val < 0) val = 0;
+                                                if (val > 59) val = 59;
+                                                let h = form.time ? form.time.split(':')[0] : '08';
+                                                setForm({ ...form, time: `${h}:${String(val).padStart(2, '0')}` });
+                                            }}
+                                        />
+                                        <button
+                                            className="btn btn-ghost btn-xs btn-circle"
+                                            onClick={() => {
+                                                let h = form.time ? parseInt(form.time.split(':')[0]) : 8;
+                                                let m = form.time ? parseInt(form.time.split(':')[1]) : 0;
+                                                m = (m + 15) % 60;
+                                                setForm({ ...form, time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` });
+                                            }}
+                                        >▶</button>
                                     </div>
                                 </div>
                             </div>
