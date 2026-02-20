@@ -354,7 +354,7 @@ export default function GymTakip() {
                                                 const isCardio = log.type === 'cardio';
                                                 return (
                                                     <div key={log._index} className="relative group p-1">
-                                                        <div className="absolute right-0 top-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <div className="absolute right-0 top-0 flex gap-1 transition-opacity">
                                                             <button className="btn btn-ghost btn-xs text-info px-1" onClick={() => openEdit(log._index)}>✎</button>
                                                             <button className="btn btn-ghost btn-xs text-error px-1" onClick={() => setDeleteIndex(log._index)}>✕</button>
                                                         </div>

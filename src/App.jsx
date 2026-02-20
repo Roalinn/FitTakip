@@ -33,27 +33,35 @@ export default function App() {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
         if (!isMobile) return;
 
-        // Push root state to intercept the last back button press
-        window.history.pushState({ isRoot: true }, '');
+        // Ensure history has a safe baseline to trap back events without causing blank screens
+        if (!window.history.state || window.history.state.page !== 'app') {
+            window.history.replaceState({ page: 'base' }, '');
+            window.history.pushState({ page: 'app' }, '');
+        }
 
         const handlePopState = (e) => {
-            // e.state is the state we are transitioning TO.
-            // If e.state.isRoot is true, we just closed a modal.
-            // If e.state.isModal is true, we are transitioning to another modal.
-            if (e.state && (e.state.isRoot || e.state.isModal)) return;
+            // Only trap the popstate if the user reached our 'base' dummy history.
+            // If returning from modals, the state will be 'app' or something else, harmless.
+            if (e.state && e.state.page === 'base') {
+                if (exitToastRef.current) {
+                    // User confirmed exit with double back
+                    window.history.back();
+                    return;
+                }
 
-            // Otherwise, we are trying to exit the app (state is null or something else)
-            // First press: prevent exit, show toast, and wait. Do NOT push state yet.
-            exitToastRef.current = true;
-            setExitToast(true);
+                // First back press: Warn and prevent
+                exitToastRef.current = true;
+                setExitToast(true);
 
-            if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-            exitTimerRef.current = setTimeout(() => {
-                exitToastRef.current = false;
-                setExitToast(false);
-                // User didn't exit, protect against next back press
-                window.history.pushState({ isRoot: true }, '');
-            }, 2000);
+                // Immediately push state forward to trap again!
+                window.history.pushState({ page: 'app' }, '');
+
+                if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+                exitTimerRef.current = setTimeout(() => {
+                    exitToastRef.current = false;
+                    setExitToast(false);
+                }, 2000);
+            }
         };
 
         window.addEventListener('popstate', handlePopState);
@@ -155,7 +163,7 @@ export default function App() {
             </main>
             {/* Double Back Exit Toast */}
             {exitToast && (
-                <div className="toast toast-center toast-bottom z-50 mb-8 sm:mb-0 w-max">
+                <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 w-max pointer-events-none">
                     <div className="alert py-2 px-6 shadow-xl border border-white/10 bg-base-300 text-base-content rounded-full text-sm font-medium">
                         <span>{t('toast_double_back', 'Çıkmak için tekrar dokunun')}</span>
                     </div>
