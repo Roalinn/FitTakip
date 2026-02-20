@@ -84,6 +84,16 @@ export default function AnaHedef() {
     }
     const bfPercentage = bodyFat ? Math.min(100, Math.max(0, ((bodyFat) / 45) * 100)) : 0;
 
+    // BMR Calculation (Mifflin-St Jeor formula)
+    let bmr = null;
+    if (currentWeight && goal.height && goal.age) {
+        if (goal.gender === 'erkek') {
+            bmr = (10 * currentWeight) + (6.25 * goal.height) - (5 * goal.age) + 5;
+        } else {
+            bmr = (10 * currentWeight) + (6.25 * goal.height) - (5 * goal.age) - 161;
+        }
+    }
+
     const handleSave = () => {
         dispatch({
             type: 'SET_GOAL',
@@ -387,6 +397,32 @@ export default function AnaHedef() {
                                         <p className={`text-lg font-bold ${bfColor}`}>{bfCategory}</p>
                                         <div className="mt-2 pt-2 border-t border-base-300">
                                             <p className="text-xs text-base-content/50">{t('bf_note', 'Deurenberg formülüyle tahmini')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* BMR Estimation */}
+                        {bmr !== null && (
+                            <motion.div
+                                className="card bg-base-200 rounded-xl overflow-hidden relative"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.45 }}
+                            >
+                                <div className="card-body p-5 flex flex-row items-center gap-6">
+                                    <div
+                                        className={`radial-progress text-secondary`}
+                                        style={{ "--value": 100, "--size": "5.5rem", "--thickness": "6px" }}
+                                    >
+                                        <span className="text-xl">🔥</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium mb-1">{t('bmr_title', 'Bazal Metabolizma Hızı')}</p>
+                                        <p className={`text-xl font-bold text-secondary`}>{Math.round(bmr)} <span className="text-sm font-normal text-base-content/60">kcal/gün</span></p>
+                                        <div className="mt-2 pt-2 border-t border-base-300">
+                                            <p className="text-xs text-base-content/50">{t('bmr_note', 'Dinlenirken harcanan enerji')}</p>
                                         </div>
                                     </div>
                                 </div>

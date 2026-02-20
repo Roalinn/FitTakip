@@ -4,11 +4,13 @@ import Sidebar from './components/Sidebar';
 import AnaHedef from './pages/AnaHedef';
 import Programlar from './pages/Programlar';
 import Takip from './pages/Takip';
+import Gunluk from './pages/Gunluk';
 import Ayarlar from './pages/Ayarlar';
 const pages = {
     anaHedef: AnaHedef,
     programlar: Programlar,
     takip: Takip,
+    gunluk: Gunluk,
     ayarlar: Ayarlar,
 };
 

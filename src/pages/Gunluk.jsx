@@ -94,89 +94,22 @@ export default function Gunluk() {
     const getMood = (val) => MOOD_OPTIONS.find(m => m.value === val) || MOOD_OPTIONS[2];
     const getEnergy = (val) => ENERGY_OPTIONS.find(e => e.value === val) || ENERGY_OPTIONS[1];
 
-    // Last 7 days mood trend
-    const last7Moods = useMemo(() => {
-        const days = [];
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            const key = d.toISOString().split('T')[0];
-            const entry = journal.find(j => j.date === key);
-            days.push({
-                label: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
-                mood: entry ? entry.mood : 0,
-                isToday: i === 0,
-            });
-        }
-        return days;
-    }, [journal]);
+    // Last 7 days mood trend removed
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-semibold">{t('gunluk_title', 'Günlük')}</h3>
-                    <p className="text-xs text-base-content/40 mt-0.5">{t('gunluk_desc', 'Günlük notlarını ve ruh halini kaydet')}</p>
+                    <h2 className="text-2xl font-bold">{t('gunluk_title', 'Günlük')}</h2>
+                    <p className="text-sm text-base-content/50 mt-1">{t('gunluk_desc', 'Günlük notlarını ve ruh halini kaydet')}</p>
                 </div>
-                <button className="btn btn-primary btn-sm rounded-xl" onClick={openAdd}>
+                <button className="btn btn-primary rounded-xl" onClick={openAdd}>
                     + {t('gunluk_add', 'Yeni Kayıt')}
                 </button>
             </div>
 
-            {/* Today's mood summary */}
-            {todayEntry && (
-                <motion.div
-                    className="card bg-base-200 rounded-xl"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="card-body p-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl">{getMood(todayEntry.mood).emoji}</span>
-                                <div>
-                                    <p className="text-sm font-medium">{t('gunluk_today', 'Bugün')}: {getMood(todayEntry.mood).label}</p>
-                                    <p className="text-xs text-base-content/50">
-                                        {t('gunluk_energy', 'Enerji')}: {getEnergy(todayEntry.energy).emoji} {getEnergy(todayEntry.energy).label}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        {todayEntry.note && (
-                            <p className="text-sm text-base-content/60 mt-2 border-t border-base-300 pt-2 italic">
-                                "{todayEntry.note}"
-                            </p>
-                        )}
-                    </div>
-                </motion.div>
-            )}
-
-            {/* Last 7 days mood dots */}
-            <motion.div
-                className="card bg-base-200 rounded-xl"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-            >
-                <div className="card-body p-4">
-                    <h4 className="font-semibold text-sm mb-3">{t('gunluk_mood_7', 'Son 7 Gün Ruh Hali')}</h4>
-                    <div className="flex justify-between gap-2">
-                        {last7Moods.map((day, i) => (
-                            <div key={i} className="flex-1 text-center">
-                                <div className="text-2xl mb-1">
-                                    {day.mood > 0 ? getMood(day.mood).emoji : '·'}
-                                </div>
-                                <p className={`text-xs ${day.isToday ? 'font-bold text-primary' : 'text-base-content/40'}`}>
-                                    {day.label}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </motion.div>
-
             {/* Journal Entries */}
-            <div className="space-y-3">
+            <div className="space-y-3 mt-4">
                 <h4 className="font-semibold text-sm">{t('gunluk_entries', 'Kayıtlar')}</h4>
                 {sortedEntries.length > 0 ? (
                     sortedEntries.map((entry, i) => {
