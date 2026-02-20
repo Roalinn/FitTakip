@@ -370,8 +370,8 @@ export default function GymTakip() {
                                                                         </>
                                                                     ) : (
                                                                         <>
-                                                                            <div className="col-span-2 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.sets ? `${ex.sets} set` : '-'}</div>
-                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
+                                                                            <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.sets ? `${ex.sets} set` : '-'}</div>
+                                                                            <div className="col-span-2 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.reps ? `${ex.reps} tkr` : '-'}</div>
                                                                             <div className="col-span-3 text-right text-base-content/80 text-[11px] sm:text-sm whitespace-nowrap">{ex.weight ? `${ex.weight} kg` : '-'}</div>
                                                                         </>
                                                                     )}
